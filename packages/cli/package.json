@@ -1,0 +1,76 @@
+{
+  "name": "clipr",
+  "version": "0.0.1",
+  "description": "A fast, git-friendly URL shortener. CLI + programmatic API.",
+  "type": "module",
+  "bin": {
+    "clipr": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/api.js",
+      "types": "./dist/api.d.ts"
+    },
+    "./cli": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/api.js",
+  "types": "./dist/api.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "url-shortener",
+    "short-url",
+    "cli",
+    "clipr",
+    "shorten",
+    "redirect",
+    "cloudflare-workers",
+    "github-pages",
+    "qrcode",
+    "utm"
+  ],
+  "homepage": "https://github.com/hammadkhanxcm/clipr#readme",
+  "bugs": {
+    "url": "https://github.com/hammadkhanxcm/clipr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hammadkhanxcm/clipr.git",
+    "directory": "packages/cli"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@clipr/core": "workspace:*",
+    "commander": "^13.0.0",
+    "picocolors": "^1.1.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/qrcode": "^1.5.6",
+    "tsup": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "author": "Hammad Khan"
+}

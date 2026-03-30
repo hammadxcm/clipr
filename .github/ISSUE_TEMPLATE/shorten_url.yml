@@ -1,0 +1,21 @@
+name: Shorten URL
+description: Create a short URL via GitHub Issues
+labels: [url]
+title: "https://"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Paste a URL as the issue title (starting with `https://`).
+        The bot will create a short link, update `urls.json`, and close the issue automatically.
+  - type: input
+    id: slug
+    attributes:
+      label: Custom slug (optional)
+      description: Leave blank for a random slug.
+      placeholder: "my-link"
+  - type: input
+    id: description
+    attributes:
+      label: Description (optional)
+      placeholder: "Marketing campaign Q1"

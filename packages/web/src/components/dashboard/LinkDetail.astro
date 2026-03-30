@@ -1,0 +1,70 @@
+---
+import type { UrlEntry } from '@clipr/core';
+
+interface Props {
+  link: UrlEntry;
+  baseUrl: string;
+}
+
+const { link, baseUrl } = Astro.props;
+const shortUrl = baseUrl ? `${baseUrl}/${link.slug}` : link.slug;
+const hasUtm = link.utm && Object.values(link.utm).some((v) => v);
+---
+
+<div class="mx-auto max-w-2xl">
+  <a href="/dashboard" class="mb-6 inline-flex items-center gap-1 text-sm text-zinc-500 transition hover:text-zinc-300">
+    &larr; Back to links
+  </a>
+
+  <div class="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
+    <div class="mb-6 flex items-center justify-between">
+      <h2 class="font-mono text-xl font-bold text-accent-hover">{shortUrl}</h2>
+      <span class="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">Active</span>
+    </div>
+
+    <dl class="space-y-4">
+      <div>
+        <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Target URL</dt>
+        <dd class="mt-1 break-all text-sm text-zinc-200">{link.url}</dd>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Created</dt>
+          <dd class="mt-1 text-sm text-zinc-300">{new Date(link.createdAt).toLocaleString()}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Expires</dt>
+          <dd class="mt-1 text-sm text-zinc-300">
+            {link.expiresAt ? new Date(link.expiresAt).toLocaleString() : 'Never'}
+          </dd>
+        </div>
+      </div>
+
+      {link.description && (
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Description</dt>
+          <dd class="mt-1 text-sm text-zinc-300">{link.description}</dd>
+        </div>
+      )}
+
+      {hasUtm && (
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">UTM Parameters</dt>
+          <dd class="mt-2">
+            <div class="grid grid-cols-2 gap-2">
+              {Object.entries(link.utm!).map(([key, value]) =>
+                value ? (
+                  <div class="rounded-lg bg-zinc-800/50 px-3 py-2">
+                    <span class="text-xs text-zinc-500">{key}</span>
+                    <p class="text-sm text-zinc-200">{value}</p>
+                  </div>
+                ) : null
+              )}
+            </div>
+          </dd>
+        </div>
+      )}
+    </dl>
+  </div>
+</div>

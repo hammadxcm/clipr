@@ -1,0 +1,26 @@
+---
+---
+
+<div id="toast-container" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9998;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;"></div>
+
+<script is:inline>
+  window.showToast = function(message, type) {
+    type = type || 'info';
+    var container = document.getElementById('toast-container');
+    if (!container) return;
+    var colors = { success: '#28c840', error: '#ff5f57', info: 'var(--color-brand)' };
+    var toast = document.createElement('div');
+    toast.style.cssText = 'pointer-events:auto;padding:0.75rem 1rem;border-radius:0.5rem;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);color:var(--color-text-primary);font-size:0.875rem;box-shadow:0 4px 12px rgba(0,0,0,0.3);opacity:0;transform:translateY(10px);transition:opacity 0.3s,transform 0.3s;border-left:3px solid ' + (colors[type] || colors.info) + ';';
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(function() {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+    });
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+  };
+</script>

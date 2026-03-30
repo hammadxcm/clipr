@@ -1,0 +1,111 @@
+---
+---
+
+<div class="mx-auto max-w-2xl">
+  <h1 class="mb-8 text-2xl font-bold text-white">Create short link</h1>
+
+  <form class="space-y-6 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
+    <!-- Target URL -->
+    <div>
+      <label for="url" class="mb-2 block text-sm font-medium text-zinc-300">Target URL</label>
+      <input
+        type="url"
+        id="url"
+        name="url"
+        placeholder="https://example.com/your-long-url"
+        required
+        class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+      />
+    </div>
+
+    <!-- Custom slug -->
+    <div>
+      <label for="slug" class="mb-2 block text-sm font-medium text-zinc-300">
+        Custom slug <span class="text-zinc-500">(optional)</span>
+      </label>
+      <input
+        type="text"
+        id="slug"
+        name="slug"
+        placeholder="my-link"
+        pattern="[a-z0-9][a-z0-9-]*[a-z0-9]|[a-z0-9]"
+        class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 font-mono text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+      />
+      <p class="mt-1 text-xs text-zinc-500">Lowercase letters, numbers, and hyphens. Random if empty.</p>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label for="description" class="mb-2 block text-sm font-medium text-zinc-300">
+        Description <span class="text-zinc-500">(optional)</span>
+      </label>
+      <input
+        type="text"
+        id="description"
+        name="description"
+        placeholder="Campaign link for Q1 launch"
+        class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+      />
+    </div>
+
+    <!-- Expiration -->
+    <div>
+      <label for="expires" class="mb-2 block text-sm font-medium text-zinc-300">
+        Expiration <span class="text-zinc-500">(optional)</span>
+      </label>
+      <input
+        type="date"
+        id="expires"
+        name="expires"
+        class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-4 py-2.5 text-sm text-white outline-none transition focus:border-accent focus:ring-1 focus:ring-accent"
+      />
+    </div>
+
+    <!-- UTM section -->
+    <details class="group">
+      <summary class="cursor-pointer text-sm font-medium text-zinc-400 transition hover:text-zinc-200">
+        UTM parameters
+        <span class="ml-1 text-zinc-600 group-open:hidden">+</span>
+        <span class="ml-1 text-zinc-600 hidden group-open:inline">&minus;</span>
+      </summary>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="utm_source" class="mb-1 block text-xs text-zinc-500">Source</label>
+          <input type="text" id="utm_source" name="utm_source" placeholder="twitter"
+            class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent" />
+        </div>
+        <div>
+          <label for="utm_medium" class="mb-1 block text-xs text-zinc-500">Medium</label>
+          <input type="text" id="utm_medium" name="utm_medium" placeholder="social"
+            class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent" />
+        </div>
+        <div>
+          <label for="utm_campaign" class="mb-1 block text-xs text-zinc-500">Campaign</label>
+          <input type="text" id="utm_campaign" name="utm_campaign" placeholder="launch-2026"
+            class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent" />
+        </div>
+        <div>
+          <label for="utm_term" class="mb-1 block text-xs text-zinc-500">Term</label>
+          <input type="text" id="utm_term" name="utm_term" placeholder="keyword"
+            class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent" />
+        </div>
+        <div class="sm:col-span-2">
+          <label for="utm_content" class="mb-1 block text-xs text-zinc-500">Content</label>
+          <input type="text" id="utm_content" name="utm_content" placeholder="banner-ad"
+            class="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-accent" />
+        </div>
+      </div>
+    </details>
+
+    <button
+      type="submit"
+      class="w-full rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-hover"
+    >
+      Create short link
+    </button>
+  </form>
+
+  <p class="mt-4 text-center text-xs text-zinc-500">
+    This form is a preview. Use <code class="rounded bg-zinc-800 px-1.5 py-0.5 font-mono">clipr shorten</code> to create links.
+  </p>
+</div>

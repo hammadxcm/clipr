@@ -1,0 +1,28 @@
+---
+import Footer from '../components/common/Footer.astro';
+import Nav from '../components/common/Nav.astro';
+import Features from '../components/hero/Features.astro';
+import Hero from '../components/hero/Hero.astro';
+import Api from '../components/showcase/Api.astro';
+import Comparison from '../components/showcase/Comparison.astro';
+import Demo from '../components/showcase/Demo.astro';
+import Install from '../components/showcase/Install.astro';
+import Shorten from '../components/showcase/Shorten.astro';
+import Toast from '../components/ui/Toast.astro';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="clipr — Short links, full control">
+  <Nav locale="en" />
+  <main>
+    <Hero locale="en" />
+    <Shorten locale="en" />
+    <Features locale="en" />
+    <Comparison locale="en" />
+    <Install locale="en" />
+    <Demo locale="en" />
+    <Api locale="en" />
+  </main>
+  <Footer />
+  <Toast />
+</Layout>

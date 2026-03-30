@@ -1,0 +1,31 @@
+{
+  "name": "@clipr/web",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Web dashboard and landing page for clipr",
+  "scripts": {
+    "prebuild": "cp ../../urls.json src/data/urls.json",
+    "dev": "astro dev",
+    "build": "pnpm prebuild && astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check",
+    "clean": "rm -rf dist .astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.3.0",
+    "@clipr/core": "workspace:*",
+    "astro": "^5.7.0",
+    "qrcode": "^1.5.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/qrcode": "^1.5.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

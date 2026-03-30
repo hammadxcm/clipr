@@ -1,0 +1,54 @@
+---
+import type { UrlEntry } from '@clipr/core';
+
+export async function getStaticPaths() {
+  let urls: Record<string, UrlEntry> = {};
+  try {
+    const manifest = await import('../data/urls.json');
+    urls = manifest.default?.urls || manifest.urls || {};
+  } catch {
+    urls = {};
+  }
+  return Object.entries(urls).map(([code, entry]) => ({
+    params: { code },
+    props: { url: (entry as UrlEntry).url },
+  }));
+}
+
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+
+// Validate URL at build time to prevent open redirects
+let safeUrl = url;
+try {
+  const parsed = new URL(url);
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    safeUrl = '/';
+  }
+} catch {
+  safeUrl = '/';
+}
+---
+
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="refresh" content={`0;url=${safeUrl}`} />
+<link rel="canonical" href={safeUrl} />
+<title>Redirecting...</title>
+</head>
+<body>
+<p>Redirecting to <a href={safeUrl}>{safeUrl}</a></p>
+<script define:vars={{ safeUrl }}>
+  try {
+    var u = new URL(safeUrl);
+    if (u.protocol === 'http:' || u.protocol === 'https:') {
+      window.location.replace(safeUrl);
+    }
+  } catch (e) {}
+</script>
+</body>
+</html>

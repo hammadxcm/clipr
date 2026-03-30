@@ -1,0 +1,195 @@
+---
+import SectionHeader from '../common/SectionHeader.astro';
+import { siteConfig } from '../../data/site';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const baseUrl = siteConfig.url || 'https://clipr.sh';
+---
+
+<section id="shorten" class="section-surface" style="padding:3rem 0;">
+  <div class="section">
+    <SectionHeader label="Try It" title="Shorten a URL" />
+    <p class="shorten-subtitle">Paste any URL below to see how clipr generates short links.</p>
+
+    <div class="shorten-card glass glow-border" style="max-width:640px;margin:2rem auto 0;border-radius:var(--radius-lg);padding:2rem;">
+
+      <!-- Form -->
+      <div id="shorten-form">
+        <div style="display:flex;gap:0.75rem;">
+          <input
+            type="url"
+            id="url-input"
+            placeholder="https://example.com/very/long/path/to/something"
+            class="input-glow"
+            style="flex:1;padding:0.75rem 1rem;font-size:1rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);"
+          />
+          <button
+            id="shorten-btn"
+            style="padding:0.75rem 1.5rem;font-size:1rem;font-weight:700;border:none;border-radius:var(--radius-sm);background:var(--color-brand);color:#fff;cursor:pointer;transition:all 0.2s;white-space:nowrap;"
+          >
+            Shorten
+          </button>
+        </div>
+        <p id="shorten-error" style="display:none;font-size:0.8rem;color:#ff5f57;margin:0.5rem 0 0;"></p>
+      </div>
+
+      <!-- Result -->
+      <div id="shorten-result" style="display:none;">
+        <div style="text-align:center;">
+          <p style="font-size:0.8rem;color:var(--color-text-secondary);margin:0 0 0.5rem;">Your short URL:</p>
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:1rem;background:var(--color-bg-elevated);border-radius:var(--radius-sm);border:1px solid var(--color-border-default);">
+            <code id="result-url" style="font-family:var(--font-mono);font-size:1.25rem;font-weight:700;color:var(--color-brand);"></code>
+            <button
+              id="copy-result-btn"
+              style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:transparent;color:var(--color-text-secondary);cursor:pointer;"
+              aria-label="Copy"
+            >
+              <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28c840" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+          </div>
+          <p style="font-size:0.75rem;color:var(--color-text-secondary);margin:0.75rem 0 0;opacity:0.7;">
+            <span id="result-original" style="word-break:break-all;"></span>
+          </p>
+          <button
+            id="shorten-again-btn"
+            style="margin-top:1rem;padding:0.5rem 1.25rem;font-size:0.875rem;font-weight:500;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:transparent;color:var(--color-text-primary);cursor:pointer;"
+          >
+            Shorten another
+          </button>
+        </div>
+      </div>
+
+      <p style="margin:1rem 0 0;font-size:0.75rem;color:var(--color-text-secondary);text-align:center;opacity:0.6;">
+        Demo mode — install <code style="font-family:var(--font-mono);padding:0.1rem 0.35rem;background:var(--color-bg-elevated);border-radius:0.25rem;">clipr</code> to create persistent short links.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .shorten-subtitle {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  #shorten-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  #copy-result-btn:hover {
+    border-color: var(--color-border-hover);
+    color: var(--color-text-primary);
+  }
+
+  @media (max-width: 640px) {
+    #shorten-form > div {
+      flex-direction: column !important;
+    }
+  }
+</style>
+
+<script define:vars={{ baseUrl }}>
+  const SLUG_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
+
+  function generateSlug(length) {
+    const bytes = new Uint8Array(length || 6);
+    crypto.getRandomValues(bytes);
+    let slug = '';
+    for (let i = 0; i < bytes.length; i++) {
+      slug += SLUG_ALPHABET[bytes[i] % SLUG_ALPHABET.length];
+    }
+    return slug;
+  }
+
+  const form = document.getElementById('shorten-form');
+  const result = document.getElementById('shorten-result');
+  const urlInput = document.getElementById('url-input');
+  const shortenBtn = document.getElementById('shorten-btn');
+  const errorEl = document.getElementById('shorten-error');
+  const resultUrl = document.getElementById('result-url');
+  const resultOriginal = document.getElementById('result-original');
+  const copyBtn = document.getElementById('copy-result-btn');
+  const againBtn = document.getElementById('shorten-again-btn');
+
+  shortenBtn.addEventListener('click', function() {
+    var url = urlInput.value.trim();
+    errorEl.style.display = 'none';
+
+    if (!url) {
+      errorEl.textContent = 'Please enter a URL';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    try {
+      var parsed = new URL(url);
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        errorEl.textContent = 'Only http and https URLs are supported';
+        errorEl.style.display = 'block';
+        return;
+      }
+    } catch (e) {
+      errorEl.textContent = 'Please enter a valid URL';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    var slug = generateSlug(6);
+    var shortUrl = baseUrl + '/' + slug;
+
+    resultUrl.textContent = shortUrl;
+    resultOriginal.textContent = url;
+    form.style.display = 'none';
+    result.style.display = 'block';
+
+    if (typeof window.showToast === 'function') {
+      window.showToast('Short URL generated!', 'success');
+    }
+  });
+
+  // Enter key to submit
+  urlInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') shortenBtn.click();
+  });
+
+  // Copy
+  copyBtn.addEventListener('click', function() {
+    var text = resultUrl.textContent || '';
+    navigator.clipboard.writeText(text).then(function() {
+      var copyIcon = copyBtn.querySelector('.copy-icon');
+      var checkIcon = copyBtn.querySelector('.check-icon');
+      copyIcon.style.display = 'none';
+      checkIcon.style.display = 'block';
+      setTimeout(function() {
+        copyIcon.style.display = 'block';
+        checkIcon.style.display = 'none';
+      }, 1500);
+      if (typeof window.showToast === 'function') {
+        window.showToast('Copied!', 'success');
+      }
+    });
+  });
+
+  // Again
+  againBtn.addEventListener('click', function() {
+    urlInput.value = '';
+    result.style.display = 'none';
+    form.style.display = 'block';
+    urlInput.focus();
+  });
+</script>

@@ -1,0 +1,202 @@
+---
+import { apiExports } from '../../data/site';
+import { getTranslation } from '../../i18n/index';
+import SectionHeader from '../common/SectionHeader.astro';
+import Terminal from './Terminal.astro';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const codeExample = [
+  { text: '// app.ts', class: 'terminal-output' },
+  {
+    text: "import { JsonBackend, validateUrl, appendUtm } from '@clipr/core';",
+    class: 'terminal-command',
+  },
+  { text: '', class: 'terminal-output' },
+  { text: "const backend = new JsonBackend('./urls.json');", class: 'terminal-command' },
+  { text: '', class: 'terminal-output' },
+  { text: '// Validate and shorten', class: 'terminal-output' },
+  { text: "const url = 'https://example.com/launch';", class: 'terminal-command' },
+  { text: 'if (validateUrl(url)) {', class: 'terminal-command' },
+  { text: '  const slug = await backend.shorten(url);', class: 'terminal-command' },
+  { text: '  console.log(`Created: ${slug}`);', class: 'terminal-success' },
+  { text: '}', class: 'terminal-command' },
+  { text: '', class: 'terminal-output' },
+  { text: '// Append UTM params', class: 'terminal-output' },
+  { text: 'const tracked = appendUtm(url, {', class: 'terminal-command' },
+  { text: "  source: 'twitter',", class: 'terminal-command' },
+  { text: "  medium: 'social',", class: 'terminal-command' },
+  { text: '});', class: 'terminal-command' },
+];
+---
+
+<section id="api">
+  <div class="section">
+    <SectionHeader label={t('api.label')} title={t('api.title')} />
+
+    <p class="api-subtitle reveal">{t('api.subtitle')}</p>
+
+    <div class="api-grid">
+      <!-- LEFT: Exports list -->
+      <div class="api-exports reveal-left">
+        <h3 class="api-exports-title">@clipr/core exports</h3>
+        <ul class="api-exports-list">
+          {apiExports.map((item, i) => (
+            <li class="api-export-item" style={`--stagger-index: ${i};`}>
+              <code class="api-export-name">{item.name}</code>
+              <span class="api-export-desc">{item.desc}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="api-install-hint">
+          <span class="terminal-prompt">$</span>
+          <code>npm install @clipr/core</code>
+        </div>
+      </div>
+
+      <!-- RIGHT: Code example -->
+      <div class="api-code reveal-right">
+        <Terminal title="@clipr/core — usage example">
+          {codeExample.map((line) => (
+            <div class={`terminal-line ${line.class}`}>{line.text}</div>
+          ))}
+        </Terminal>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .api-subtitle {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0 auto 2.5rem;
+  }
+
+  .api-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2.5rem;
+    align-items: start;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* Exports list */
+  .api-exports {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .api-exports-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .api-exports-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .api-export-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border-default);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .api-export-item:hover {
+    border-color: var(--color-border-hover);
+    transform: translateX(4px);
+  }
+
+  .api-export-name {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-brand);
+    background: color-mix(in srgb, var(--color-brand) 8%, transparent);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  .api-export-desc {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    padding-left: 0.1rem;
+  }
+
+  .api-install-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--color-brand) 5%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--color-brand) 20%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  .api-install-hint code {
+    color: var(--color-text-accent);
+  }
+
+  /* Code side */
+  .api-code {
+    position: relative;
+  }
+
+  .api-code::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 13px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-brand) 15%, transparent),
+      transparent 50%
+    );
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 768px) {
+    .api-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .api-exports {
+      order: 2;
+    }
+
+    .api-code {
+      order: 1;
+    }
+  }
+</style>

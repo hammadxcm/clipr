@@ -1,0 +1,53 @@
+---
+import Footer from '../components/common/Footer.astro';
+import Nav from '../components/common/Nav.astro';
+import Layout from '../layouts/Layout.astro';
+
+let urlsJson = '{}';
+try {
+  const manifest = await import('../data/urls.json');
+  urlsJson = JSON.stringify(manifest.default?.urls || manifest.urls || {});
+} catch {
+  urlsJson = '{}';
+}
+---
+
+<Layout title="404 — clipr">
+  <Nav />
+  <main style="min-height:60vh;display:flex;align-items:center;justify-content:center;padding:2rem;">
+    <div style="text-align:center;max-width:480px;">
+      <h1 style="font-size:4rem;font-weight:800;margin:0;" class="gradient-text">404</h1>
+      <p style="font-size:1.25rem;color:var(--color-text-secondary);margin:1rem 0;">
+        This link doesn't exist.
+      </p>
+      <p id="redirect-msg" style="display:none;font-size:0.875rem;color:var(--color-brand);margin:1rem 0;">
+        Redirecting...
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;margin-top:2rem;">
+        <a href="/" style="padding:0.625rem 1.5rem;border-radius:0.5rem;background:var(--color-brand);color:#fff;text-decoration:none;font-size:0.875rem;font-weight:600;">
+          Home
+        </a>
+        <a href="/dashboard" style="padding:0.625rem 1.5rem;border-radius:0.5rem;border:1px solid var(--color-border-default);color:var(--color-text-primary);text-decoration:none;font-size:0.875rem;font-weight:600;">
+          Dashboard
+        </a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script define:vars={{ urlsJson }}>
+  // Try to find the URL in embedded database
+  try {
+    var urls = JSON.parse(urlsJson);
+    var path = window.location.pathname.replace(/^\/|\/$/g, '');
+    if (urls[path] && urls[path].url) {
+      var target = urls[path].url;
+      var parsed = new URL(target);
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        document.getElementById('redirect-msg').style.display = 'block';
+        window.location.replace(target);
+      }
+    }
+  } catch (e) {}
+</script>

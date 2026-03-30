@@ -1,0 +1,77 @@
+---
+interface Props {
+  url: string;
+  size?: number;
+}
+
+const { url, size = 200 } = Astro.props;
+---
+
+<div class="qr-display" style="display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem;background:var(--color-bg-surface);border:1px solid var(--color-border-default);border-radius:var(--radius-md);">
+  <div
+    id="qr-container"
+    data-url={url}
+    data-size={size}
+    style={`width:${size}px;height:${size}px;background:#fff;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;`}
+  >
+    <span style="font-size:0.75rem;color:var(--color-text-secondary);">Loading QR...</span>
+  </div>
+
+  <div style="display:flex;gap:0.5rem;">
+    <button
+      id="qr-download-svg"
+      style="padding:0.375rem 0.75rem;font-size:0.75rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:transparent;color:var(--color-text-secondary);cursor:pointer;"
+    >
+      Download SVG
+    </button>
+    <button
+      id="qr-download-png"
+      style="padding:0.375rem 0.75rem;font-size:0.75rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:transparent;color:var(--color-text-secondary);cursor:pointer;"
+    >
+      Download PNG
+    </button>
+  </div>
+</div>
+
+<script>
+  async function renderQR() {
+    const container = document.getElementById('qr-container');
+    if (!container) return;
+    const url = container.dataset.url;
+    const size = Number(container.dataset.size) || 200;
+    if (!url) return;
+
+    try {
+      const QRCode = (await import('qrcode')).default;
+      const svg = await QRCode.toString(url, { type: 'svg', width: size, margin: 2 });
+      // Safe SVG injection via DOMParser (avoids raw innerHTML XSS risk)
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(svg, 'image/svg+xml');
+      const svgEl = doc.documentElement;
+      if (svgEl.tagName === 'svg') {
+        container.textContent = '';
+        container.appendChild(document.importNode(svgEl, true));
+      }
+
+      document.getElementById('qr-download-svg')?.addEventListener('click', () => {
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'qr-code.svg';
+        a.click();
+      });
+
+      document.getElementById('qr-download-png')?.addEventListener('click', async () => {
+        const dataUrl = await QRCode.toDataURL(url, { width: size, margin: 2 });
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'qr-code.png';
+        a.click();
+      });
+    } catch {
+      container.textContent = 'QR generation unavailable';
+    }
+  }
+
+  renderQR();
+</script>

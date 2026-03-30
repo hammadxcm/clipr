@@ -1,0 +1,116 @@
+---
+import { demoTabs } from '../../data/site';
+import { getTranslation } from '../../i18n/index';
+import SectionHeader from '../common/SectionHeader.astro';
+import Terminal from './Terminal.astro';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+---
+
+<section id="demos">
+  <div class="section">
+    <SectionHeader label={t('demo.label')} title={t('demo.title')} />
+
+    <p class="demo-subtitle reveal">{t('demo.subtitle')}</p>
+
+    <div class="demo-container reveal">
+      <!-- Tab bar -->
+      <div class="demo-tabs" role="tablist" aria-label="Demo categories">
+        {demoTabs.map((tab, i) => (
+          <Fragment>
+            <input
+              type="radio"
+              name="demo-tab"
+              id={`demo-${tab.id}`}
+              value={tab.id}
+              checked={i === 0}
+            />
+            <label for={`demo-${tab.id}`} role="tab" aria-selected={i === 0 ? 'true' : 'false'}>
+              {tab.label}
+            </label>
+          </Fragment>
+        ))}
+      </div>
+
+      <!-- Tab panels -->
+      {demoTabs.map((tab, i) => (
+        <div
+          class:list={['demo-tab-content', { active: i === 0 }]}
+          data-demo-panel={tab.id}
+          role="tabpanel"
+          aria-labelledby={`demo-${tab.id}`}
+        >
+          {tab.examples.map((example) => (
+            <div class="demo-example">
+              <Terminal title={example.title}>
+                {example.lines.map((line) => {
+                  const isCommand = line.startsWith('$');
+                  const isSuccess = line.startsWith('\u2713');
+                  const isInfo = line.startsWith('\u2139');
+                  const cssClass = isCommand
+                    ? 'terminal-command'
+                    : isSuccess
+                      ? 'terminal-success'
+                      : isInfo
+                        ? 'terminal-warning'
+                        : 'terminal-output';
+                  return <div class={`terminal-line ${cssClass}`}>{line}</div>;
+                })}
+              </Terminal>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .demo-subtitle {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    margin: 0 auto 2rem;
+  }
+
+  .demo-container {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .demo-example {
+    min-width: 0;
+  }
+
+  @media (max-width: 640px) {
+    .demo-tab-content.active {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  function initDemoTabs(): void {
+    const radios = document.querySelectorAll<HTMLInputElement>('input[name="demo-tab"]');
+    const panels = document.querySelectorAll<HTMLElement>('.demo-tab-content');
+
+    radios.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        panels.forEach((panel) => {
+          panel.classList.toggle('active', panel.dataset.demoPanel === radio.value);
+        });
+        radios.forEach((r) => {
+          const label = r.nextElementSibling as HTMLElement;
+          if (label) label.setAttribute('aria-selected', String(r.checked));
+        });
+      });
+    });
+  }
+
+  initDemoTabs();
+</script>

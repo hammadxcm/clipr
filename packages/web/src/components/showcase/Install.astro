@@ -1,0 +1,233 @@
+---
+import { installCommands } from '../../data/site';
+import { getTranslation } from '../../i18n/index';
+import SectionHeader from '../common/SectionHeader.astro';
+import CopyButton from '../ui/CopyButton.astro';
+import Terminal from './Terminal.astro';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const tabs = Object.keys(installCommands) as (keyof typeof installCommands)[];
+const tabLabels: Record<string, string> = {
+  npm: 'npm',
+  pnpm: 'pnpm',
+  yarn: 'yarn',
+  bun: 'bun',
+  brew: 'brew',
+};
+---
+
+<section id="install" class="section-surface">
+  <div class="section">
+    <SectionHeader label={t('install.label')} title={t('install.title')} />
+
+    <div class="install-container reveal">
+      <!-- Tab bar -->
+      <div class="install-tabs" role="tablist" aria-label="Package manager">
+        {tabs.map((tab, i) => (
+          <Fragment>
+            <input
+              type="radio"
+              name="install-tab"
+              id={`install-${tab}`}
+              value={tab}
+              checked={i === 0}
+              class="install-radio"
+            />
+            <label for={`install-${tab}`} role="tab" aria-selected={i === 0 ? 'true' : 'false'}>
+              {tabLabels[tab]}
+            </label>
+          </Fragment>
+        ))}
+      </div>
+
+      <!-- Tab panels -->
+      <div class="install-panels">
+        {tabs.map((tab, i) => (
+          <div
+            class:list={['install-panel', { active: i === 0 }]}
+            data-panel={tab}
+            role="tabpanel"
+            aria-labelledby={`install-${tab}`}
+          >
+            <div class="install-commands">
+              <div class="install-block">
+                <span class="install-block-label">Quick Start</span>
+                <Terminal title={`${tabLabels[tab]} — quick start`}>
+                  <div class="install-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command"> {installCommands[tab].quick}</span>
+                    <CopyButton text={installCommands[tab].quick} />
+                  </div>
+                </Terminal>
+              </div>
+
+              <div class="install-block">
+                <span class="install-block-label">Global Install</span>
+                <Terminal title={`${tabLabels[tab]} — global`}>
+                  <div class="install-line">
+                    <span class="terminal-prompt">$</span>
+                    <span class="terminal-command"> {installCommands[tab].global}</span>
+                    <CopyButton text={installCommands[tab].global} />
+                  </div>
+                </Terminal>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- API usage example -->
+      <div class="install-api reveal" style="transition-delay: 0.15s;">
+        <span class="install-block-label">Use as a library</span>
+        <Terminal title="@clipr/core">
+          <div class="install-line">
+            <span class="terminal-prompt">$</span>
+            <span class="terminal-command"> npm install @clipr/core</span>
+            <CopyButton text="npm install @clipr/core" />
+          </div>
+          <div class="terminal-line terminal-output" style="margin-top: 1rem; opacity: 0.5;">// app.ts</div>
+          <div class="terminal-line terminal-command">import {'{'} JsonBackend {'}'} from '@clipr/core';</div>
+          <div class="terminal-line terminal-command" style="margin-top: 0.25rem;">const backend = new JsonBackend('./urls.json');</div>
+          <div class="terminal-line terminal-command">const slug = await backend.shorten('https://example.com');</div>
+          <div class="terminal-line terminal-success" style="margin-top: 0.5rem;">// slug: "x7k9m2"</div>
+        </Terminal>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .install-container {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* Tabs */
+  .install-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--color-border-default);
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .install-radio {
+    display: none;
+  }
+
+  .install-tabs label {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-family: var(--font-mono);
+  }
+
+  .install-tabs label:hover {
+    color: var(--color-text-primary);
+  }
+
+  .install-radio:checked + label {
+    color: var(--color-brand);
+    border-bottom-color: var(--color-brand);
+  }
+
+  /* Panels */
+  .install-panel {
+    display: none;
+  }
+
+  .install-panel.active {
+    display: block;
+  }
+
+  .install-commands {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .install-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .install-block-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+    padding-left: 0.25rem;
+  }
+
+  .install-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .install-line .terminal-command {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* API block */
+  .install-api {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border-default);
+  }
+
+  @media (max-width: 640px) {
+    .install-tabs label {
+      padding: 0.6rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    .install-line {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>
+
+<script>
+  function initInstallTabs(): void {
+    const radios = document.querySelectorAll<HTMLInputElement>('input[name="install-tab"]');
+    const panels = document.querySelectorAll<HTMLElement>('.install-panel');
+
+    radios.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        panels.forEach((panel) => {
+          panel.classList.toggle('active', panel.dataset.panel === radio.value);
+        });
+        // Update aria-selected
+        radios.forEach((r) => {
+          const label = r.nextElementSibling as HTMLElement;
+          if (label) label.setAttribute('aria-selected', String(r.checked));
+        });
+      });
+    });
+  }
+
+  initInstallTabs();
+</script>

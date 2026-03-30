@@ -1,0 +1,59 @@
+{
+  "name": "clipr-monorepo",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.8.0",
+  "scripts": {
+    "build": "pnpm --filter './packages/*' run build",
+    "build:core": "pnpm --filter @clipr/core run build",
+    "build:cli": "pnpm --filter clipr run build",
+    "build:web": "pnpm --filter @clipr/web run build",
+    "build:worker": "pnpm --filter @clipr/worker run build",
+    "dev:web": "pnpm --filter @clipr/web run dev",
+    "dev:worker": "pnpm --filter @clipr/worker run dev",
+    "test": "pnpm --filter './packages/*' run test",
+    "test:coverage": "pnpm --filter './packages/*' run test:coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "pnpm --filter './packages/*' run typecheck",
+    "clean": "pnpm --filter './packages/*' run clean",
+    "changeset": "changeset",
+    "release": "changeset publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@changesets/cli": "^2.27.0",
+    "@commitlint/cli": "^19.0.0",
+    "@commitlint/config-conventional": "^19.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "typescript": "^5.7.0"
+  },
+  "lint-staged": {
+    "*": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hammadxcm/clipr.git"
+  },
+  "homepage": "https://github.com/hammadxcm/clipr#readme",
+  "bugs": {
+    "url": "https://github.com/hammadxcm/clipr/issues"
+  },
+  "author": "Hammad Khan",
+  "license": "MIT",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd",
+      "sharp"
+    ]
+  }
+}

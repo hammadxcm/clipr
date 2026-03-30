@@ -1,0 +1,72 @@
+---
+const themes = [
+  { id: 'hacker', label: 'Hacker', color: '#6366f1' },
+  { id: 'dracula', label: 'Dracula', color: '#bd93f9' },
+  { id: 'nord', label: 'Nord', color: '#88c0d0' },
+  { id: 'catppuccin', label: 'Catppuccin', color: '#cba6f7' },
+  { id: 'synthwave', label: 'Synthwave', color: '#ff2e97' },
+  { id: 'matrix', label: 'Matrix', color: '#00ff41' },
+  { id: 'bloodmoon', label: 'Blood Moon', color: '#ff0040' },
+  { id: 'midnight', label: 'Midnight', color: '#7b73ff' },
+  { id: 'arctic', label: 'Arctic', color: '#0369a1' },
+  { id: 'gruvbox', label: 'Gruvbox', color: '#fabd2f' },
+  { id: 'cyberpunk', label: 'Cyberpunk', color: '#ffd700' },
+  { id: 'nebula', label: 'Nebula', color: '#e040fb' },
+  { id: 'solarized', label: 'Solarized', color: '#268bd2' },
+  { id: 'rosepine', label: 'Rose Pine', color: '#ea9a97' },
+  { id: 'monokai', label: 'Monokai', color: '#a6e22e' },
+];
+---
+
+<div style="position:relative;">
+  <button
+    id="theme-toggle-btn"
+    aria-expanded="false"
+    aria-haspopup="true"
+    aria-label="Change theme"
+    style="display:flex;align-items:center;gap:0.375rem;padding:0.375rem 0.75rem;font-size:0.75rem;border-radius:0.375rem;border:1px solid var(--color-border-default);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all 0.2s;"
+  >
+    <span style="width:12px;height:12px;border-radius:50%;background:var(--color-brand);"></span>
+    Theme
+  </button>
+  <div
+    id="theme-dropdown"
+    role="listbox"
+    style="display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:180px;max-height:320px;overflow-y:auto;background:var(--color-bg-elevated);border:1px solid var(--color-border-default);border-radius:0.5rem;padding:0.25rem;z-index:50;"
+  >
+    <button
+      id="theme-random-btn"
+      style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;text-align:left;border:none;background:transparent;color:var(--color-text-secondary);cursor:pointer;border-radius:0.375rem;margin-bottom:0.25rem;"
+    >
+      &#127922; Random
+    </button>
+    {themes.map((t) => (
+      <button
+        class="theme-option"
+        data-theme={t.id}
+        role="option"
+        aria-selected="false"
+        style={`display:flex;align-items:center;gap:0.5rem;width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;text-align:left;border:none;background:transparent;color:var(--color-text-primary);cursor:pointer;border-radius:0.375rem;`}
+      >
+        <span style={`width:12px;height:12px;border-radius:50%;background:${t.color};flex-shrink:0;`}></span>
+        {t.label}
+      </button>
+    ))}
+  </div>
+</div>
+
+<style>
+  #theme-dropdown.open {
+    display: block !important;
+  }
+  .theme-option:hover {
+    background: var(--color-bg-surface) !important;
+  }
+  .theme-option.active {
+    background: var(--color-bg-surface) !important;
+    font-weight: 600;
+  }
+  #theme-random-btn:hover {
+    background: var(--color-bg-surface) !important;
+  }
+</style>

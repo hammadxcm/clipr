@@ -1,0 +1,98 @@
+---
+import { navLinks, siteConfig } from '../../data/site';
+import LangSwitcher from '../ui/LangSwitcher.astro';
+import ThemeSwitcher from '../ui/ThemeSwitcher.astro';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+---
+
+<nav id="main-nav" class="glass" style="position:fixed;top:0;left:0;right:0;z-index:50;padding:0;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1.5rem;">
+    <!-- Logo -->
+    <a href="/" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1.125rem;font-weight:600;letter-spacing:-0.025em;color:var(--color-text-primary);">
+      <span style="display:inline-flex;height:1.75rem;width:1.75rem;align-items:center;justify-content:center;border-radius:0.5rem;background:var(--color-brand);color:#fff;font-size:0.875rem;font-weight:700;">c</span>
+      <span>clipr</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <div id="nav-menu" style="display:none;align-items:center;gap:1.5rem;" class="desktop-nav">
+      {navLinks.map((link) => (
+        <a href={link.href} class="nav-link" data-i18n={link.label} style="font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;transition:color 0.2s;">
+          {link.label.split('.').pop()}
+        </a>
+      ))}
+    </div>
+
+    <!-- Right controls -->
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <ThemeSwitcher />
+      <LangSwitcher currentLocale={locale} />
+      <a
+        href={siteConfig.github}
+        target="_blank"
+        rel="noopener"
+        style="display:none;padding:0.375rem 1rem;font-size:0.8125rem;font-weight:500;border:1px solid var(--color-border-default);border-radius:0.5rem;color:var(--color-text-primary);text-decoration:none;transition:all 0.2s;"
+        class="github-btn"
+      >
+        GitHub
+      </a>
+
+      <!-- Hamburger -->
+      <button id="nav-toggle" aria-expanded="false" aria-label="Toggle menu" style="display:flex;flex-direction:column;gap:5px;padding:0.5rem;background:none;border:none;cursor:pointer;" class="hamburger">
+        <span class="hamburger-line" style="display:block;width:20px;height:2px;background:var(--color-text-secondary);transition:all 0.3s;"></span>
+        <span class="hamburger-line" style="display:block;width:20px;height:2px;background:var(--color-text-secondary);transition:all 0.3s;"></span>
+        <span class="hamburger-line" style="display:block;width:20px;height:2px;background:var(--color-text-secondary);transition:all 0.3s;"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" style="display:none;padding:0 1.5rem 1rem;border-top:1px solid var(--color-border-default);">
+    {navLinks.map((link) => (
+      <a href={link.href} style="display:block;padding:0.75rem 0;font-size:0.9375rem;color:var(--color-text-secondary);text-decoration:none;border-bottom:1px solid var(--color-border-default);">
+        {link.label.split('.').pop()}
+      </a>
+    ))}
+    <a href={siteConfig.github} target="_blank" rel="noopener" style="display:block;padding:0.75rem 0;font-size:0.9375rem;color:var(--color-text-secondary);text-decoration:none;">
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<style>
+  @media (min-width: 1024px) {
+    .desktop-nav { display: flex !important; }
+    .github-btn { display: inline-flex !important; }
+    .hamburger { display: none !important; }
+  }
+
+  #mobile-menu.open {
+    display: block !important;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--color-brand) !important;
+  }
+
+  .github-btn:hover {
+    border-color: var(--color-text-secondary) !important;
+  }
+
+  #main-nav.scrolled {
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  #nav-toggle.open .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+  }
+  #nav-toggle.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+  }
+  #nav-toggle.open .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+  }
+</style>

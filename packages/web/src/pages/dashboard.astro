@@ -1,0 +1,77 @@
+---
+import type { UrlEntry } from '@clipr/core';
+import SearchFilter from '../components/ui/SearchFilter.astro';
+import Dashboard from '../layouts/Dashboard.astro';
+
+let links: UrlEntry[] = [];
+let baseUrl = '';
+try {
+  const manifest = await import('../data/urls.json');
+  const data = manifest.default || manifest;
+  baseUrl = data.baseUrl || '';
+  links = Object.values(data.urls || {}) as UrlEntry[];
+} catch {}
+---
+
+<Dashboard title="Links" active="links">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+    <div>
+      <h1 style="font-size:1.5rem;font-weight:700;color:var(--color-text-primary);margin:0;">Links</h1>
+      <p style="margin-top:0.25rem;font-size:0.875rem;color:var(--color-text-secondary);">
+        {links.length} shortened URL{links.length === 1 ? '' : 's'}
+      </p>
+    </div>
+    <a href="/dashboard/create" style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.5rem 1rem;border-radius:0.5rem;background:var(--color-brand);color:#fff;font-size:0.875rem;font-weight:500;text-decoration:none;">
+      + New link
+    </a>
+  </div>
+
+  <SearchFilter />
+
+  {links.length === 0 ? (
+    <div class="glass" style="text-align:center;padding:4rem 2rem;border-radius:0.75rem;">
+      <p style="font-size:1.125rem;color:var(--color-text-secondary);">No links yet</p>
+      <p style="font-size:0.875rem;color:var(--color-text-secondary);margin-top:0.5rem;">
+        Run <code style="padding:0.125rem 0.5rem;background:var(--color-bg-elevated);border-radius:0.25rem;font-family:var(--font-mono);">clipr shorten &lt;url&gt;</code> to create one.
+      </p>
+    </div>
+  ) : (
+    <div id="link-table" class="glow-border" style="overflow:hidden;border-radius:0.75rem;">
+      <table style="width:100%;text-align:left;font-size:0.875rem;border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--color-bg-surface);border-bottom:1px solid var(--color-border-default);">
+            <th style="padding:0.75rem 1rem;font-weight:500;color:var(--color-text-secondary);">Slug</th>
+            <th style="padding:0.75rem 1rem;font-weight:500;color:var(--color-text-secondary);">Target URL</th>
+            <th style="padding:0.75rem 1rem;font-weight:500;color:var(--color-text-secondary);">Created</th>
+            <th style="padding:0.75rem 1rem;font-weight:500;color:var(--color-text-secondary);">Expires</th>
+          </tr>
+        </thead>
+        <tbody>
+          {links.map((link) => (
+            <tr style="border-bottom:1px solid var(--color-border-default);">
+              <td style="padding:0.75rem 1rem;">
+                <span style="font-family:var(--font-mono);color:var(--color-brand);">
+                  {baseUrl ? `${baseUrl}/${link.slug}` : link.slug}
+                </span>
+              </td>
+              <td style="padding:0.75rem 1rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--color-text-secondary);">
+                {link.url}
+              </td>
+              <td style="padding:0.75rem 1rem;color:var(--color-text-secondary);">
+                {new Date(link.createdAt).toLocaleDateString()}
+              </td>
+              <td style="padding:0.75rem 1rem;color:var(--color-text-secondary);">
+                {link.expiresAt ? new Date(link.expiresAt).toLocaleDateString() : '\u2014'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</Dashboard>
+
+<script>
+  import { initSearch } from '../scripts/search';
+  initSearch();
+</script>

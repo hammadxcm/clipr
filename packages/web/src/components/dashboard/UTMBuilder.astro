@@ -1,0 +1,83 @@
+---
+interface Props {
+  baseUrl?: string;
+}
+
+const { baseUrl = '' } = Astro.props;
+---
+
+<div class="glass" style="border-radius:var(--radius-md);padding:1.5rem;">
+  <h3 style="font-size:1rem;font-weight:600;color:var(--color-text-primary);margin:0 0 1rem;">UTM Builder</h3>
+
+  <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 1fr;" id="utm-builder">
+    <div>
+      <label for="utm-url" style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Base URL</label>
+      <input type="url" id="utm-url" placeholder="https://example.com" value={baseUrl}
+        class="input-glow"
+        style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);" />
+    </div>
+    <div>
+      <label for="utm-source" style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Source</label>
+      <input type="text" id="utm-source" placeholder="twitter"
+        class="input-glow"
+        style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);" />
+    </div>
+    <div>
+      <label for="utm-medium" style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Medium</label>
+      <input type="text" id="utm-medium" placeholder="social"
+        class="input-glow"
+        style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);" />
+    </div>
+    <div>
+      <label for="utm-campaign" style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Campaign</label>
+      <input type="text" id="utm-campaign" placeholder="launch-2026"
+        class="input-glow"
+        style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);" />
+    </div>
+    <div>
+      <label for="utm-term" style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Term</label>
+      <input type="text" id="utm-term" placeholder="keyword"
+        class="input-glow"
+        style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);" />
+    </div>
+    <div>
+      <label for="utm-content" style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Content</label>
+      <input type="text" id="utm-content" placeholder="banner-ad"
+        class="input-glow"
+        style="width:100%;padding:0.5rem 0.75rem;font-size:0.8125rem;border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:var(--color-bg-surface);color:var(--color-text-primary);" />
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div style="margin-top:1rem;">
+    <label style="display:block;font-size:0.75rem;color:var(--color-text-secondary);margin-bottom:0.25rem;">Generated URL</label>
+    <div id="utm-preview" style="padding:0.5rem 0.75rem;font-family:var(--font-mono);font-size:0.75rem;background:var(--color-bg-elevated);border-radius:var(--radius-sm);color:var(--color-brand);word-break:break-all;min-height:2rem;">
+      Enter a URL above
+    </div>
+  </div>
+</div>
+
+<script>
+  const fields = ['url', 'source', 'medium', 'campaign', 'term', 'content'];
+  const preview = document.getElementById('utm-preview');
+
+  function updatePreview() {
+    const base = (document.getElementById('utm-url') as HTMLInputElement)?.value;
+    if (!base || !preview) return;
+
+    try {
+      const url = new URL(base);
+      for (const field of fields.slice(1)) {
+        const val = (document.getElementById(`utm-${field}`) as HTMLInputElement)?.value;
+        if (val) url.searchParams.set(`utm_${field}`, val);
+      }
+      preview.textContent = url.toString();
+    } catch {
+      preview.textContent = 'Invalid URL';
+    }
+  }
+
+  for (const field of fields) {
+    document.getElementById(`utm-${field}`)?.addEventListener('input', updatePreview);
+  }
+</script>

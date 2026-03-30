@@ -1,0 +1,59 @@
+---
+import type { UrlEntry } from '@clipr/core';
+
+interface Props {
+  links: UrlEntry[];
+  baseUrl: string;
+}
+
+const { links, baseUrl } = Astro.props;
+---
+
+{links.length === 0 ? (
+  <div class="flex flex-col items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/30 py-20">
+    <p class="text-lg text-zinc-400">No links yet</p>
+    <p class="mt-2 text-sm text-zinc-500">Create your first short link to get started.</p>
+    <a
+      href="/dashboard/create"
+      class="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-hover"
+    >
+      Create link
+    </a>
+  </div>
+) : (
+  <div class="overflow-hidden rounded-xl border border-zinc-800">
+    <table class="w-full text-left text-sm">
+      <thead>
+        <tr class="border-b border-zinc-800 bg-zinc-900/50">
+          <th class="px-4 py-3 font-medium text-zinc-400">Slug</th>
+          <th class="px-4 py-3 font-medium text-zinc-400">Target URL</th>
+          <th class="px-4 py-3 font-medium text-zinc-400">Created</th>
+          <th class="px-4 py-3 font-medium text-zinc-400">Expires</th>
+        </tr>
+      </thead>
+      <tbody>
+        {links.map((link) => (
+          <tr class="border-b border-zinc-800/50 transition hover:bg-zinc-900/30">
+            <td class="px-4 py-3">
+              <a
+                href={`/dashboard/link/${link.slug}`}
+                class="font-mono text-accent-hover transition hover:text-accent"
+              >
+                {baseUrl ? `${baseUrl}/${link.slug}` : link.slug}
+              </a>
+            </td>
+            <td class="max-w-xs truncate px-4 py-3 text-zinc-400">
+              {link.url}
+            </td>
+            <td class="px-4 py-3 text-zinc-500">
+              {new Date(link.createdAt).toLocaleDateString()}
+            </td>
+            <td class="px-4 py-3 text-zinc-500">
+              {link.expiresAt ? new Date(link.expiresAt).toLocaleDateString() : '—'}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}

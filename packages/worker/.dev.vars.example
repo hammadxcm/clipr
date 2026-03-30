@@ -1,0 +1,5 @@
+# Copy this to .dev.vars and fill in real values
+# NEVER commit .dev.vars — it's in .gitignore
+
+API_TOKEN=your-secret-api-token-here
+BASE_URL=https://clipr.sh

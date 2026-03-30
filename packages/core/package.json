@@ -1,0 +1,63 @@
+{
+  "name": "@clipr/core",
+  "version": "0.0.1",
+  "description": "Shared types, validation, slug generation, and utilities for clipr URL shortener",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "url-shortener",
+    "short-url",
+    "clipr",
+    "slug",
+    "validation",
+    "utm",
+    "sqids"
+  ],
+  "homepage": "https://github.com/hammadkhanxcm/clipr#readme",
+  "bugs": {
+    "url": "https://github.com/hammadkhanxcm/clipr/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hammadkhanxcm/clipr.git",
+    "directory": "packages/core"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "sqids": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "author": "Hammad Khan"
+}

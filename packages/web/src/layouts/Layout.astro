@@ -1,0 +1,121 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  locale?: string;
+}
+
+const {
+  title,
+  description = 'A fast, git-friendly URL shortener you own.',
+  locale = 'en',
+} = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const locales = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'zh', 'hi', 'ar', 'ur', 'bn', 'ja'];
+const rtlLocales = ['ar', 'ur'];
+const dir = rtlLocales.includes(locale) ? 'rtl' : 'ltr';
+---
+
+<!doctype html>
+<html lang={locale} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL.href} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.href} />
+    <meta property="og:site_name" content="clipr" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Hreflang -->
+    {locales.map((loc) => {
+      const href = loc === 'en' ? Astro.site?.href || '/' : `${Astro.site?.href || '/'}${loc}/`;
+      return <link rel="alternate" hreflang={loc} href={href} />;
+    })}
+    <link rel="alternate" hreflang="x-default" href={Astro.site?.href || '/'} />
+
+    <!-- Security -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'clipr',
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Any',
+      description: description,
+      url: Astro.site?.href,
+      license: 'https://opensource.org/licenses/MIT',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    })} />
+
+    <title>{title}</title>
+
+    <!-- Theme flash prevention -->
+    <script is:inline>
+      (function(){var t=localStorage.getItem('clipr-theme');if(t&&t!=='hacker')document.documentElement.setAttribute('data-theme',t);})();
+    </script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <div id="scroll-progress"></div>
+
+    <!-- Canvas for theme effects -->
+    <canvas id="hero-canvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+    <canvas id="theme-canvas" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+
+    <div id="main-content" style="position:relative;z-index:1;">
+      <slot />
+    </div>
+
+    <!-- Initialize scripts -->
+    <script>
+      import { initParticleCanvas } from '../scripts/canvas';
+      import { initThemeEffects } from '../scripts/theme-effects';
+      import { initNav } from '../scripts/nav';
+      import { initScrollReveal } from '../scripts/observer';
+      import { initSmoothScroll } from '../scripts/smooth-scroll';
+      import { initThemeSwitcher } from '../scripts/theme-switcher';
+      import { initI18n } from '../scripts/i18n';
+
+      initThemeSwitcher();
+      initI18n();
+      initNav();
+      initScrollReveal();
+      initSmoothScroll();
+      initParticleCanvas('hero-canvas');
+      initThemeEffects();
+
+      // Scroll progress bar
+      window.addEventListener('scroll', () => {
+        const bar = document.getElementById('scroll-progress');
+        if (!bar) return;
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.transform = `scaleX(${docHeight > 0 ? scrollTop / docHeight : 0})`;
+      }, { passive: true });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+  @import '../styles/themes.css';
+  @import '../styles/animations.css';
+  @import '../styles/terminal.css';
+</style>

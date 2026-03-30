@@ -1,0 +1,217 @@
+---
+import { getTranslation } from '../../i18n/index';
+import SectionHeader from '../common/SectionHeader.astro';
+import Terminal from './Terminal.astro';
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = 'en' } = Astro.props;
+const t = getTranslation(locale);
+
+const beforeSteps = [
+  { text: '1. Copy the long URL from your browser', class: 'terminal-output' },
+  { text: '2. Open Bitly / TinyURL in a new tab', class: 'terminal-output' },
+  { text: '3. Paste the URL, click "Shorten"', class: 'terminal-output' },
+  { text: '4. Copy the short URL', class: 'terminal-output' },
+  { text: '5. Paste into your spreadsheet', class: 'terminal-output' },
+  { text: '6. No versioning. No CLI. No API.', class: 'terminal-error' },
+  { text: "7. Pray the service doesn't shut down", class: 'terminal-error' },
+];
+
+const afterSteps = [
+  { text: '$ clipr shorten https://example.com/long/path', class: 'terminal-command' },
+  { text: '\u2713 Shortened \u2192 https://clpr.sh/x7k9m2', class: 'terminal-success' },
+  { text: '', class: 'terminal-output' },
+  { text: '$ git add urls.json', class: 'terminal-command' },
+  { text: '$ git commit -m "add short link for launch page"', class: 'terminal-command' },
+  { text: '\u2713 1 file changed, 8 insertions(+)', class: 'terminal-success' },
+  { text: '', class: 'terminal-output' },
+  { text: '$ clipr deploy', class: 'terminal-command' },
+  { text: '\u2713 Deployed 13 URLs to Cloudflare KV', class: 'terminal-success' },
+];
+---
+
+<section id="comparison" class="section-surface">
+  <div class="section">
+    <SectionHeader label={t('comparison.label')} title={t('comparison.title')} />
+
+    <div class="comparison-grid">
+      <!-- Before -->
+      <div class="comparison-side comparison-before reveal-left">
+        <div class="comparison-label comparison-label--before">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+          {t('comparison.before')}
+        </div>
+        <Terminal title="the old way">
+          {beforeSteps.map((step) => (
+            <div class={`terminal-line ${step.class}`}>{step.text}</div>
+          ))}
+        </Terminal>
+      </div>
+
+      <!-- Divider -->
+      <div class="comparison-divider" aria-hidden="true">
+        <div class="comparison-divider-line"></div>
+        <span class="comparison-divider-label">vs</span>
+        <div class="comparison-divider-line"></div>
+      </div>
+
+      <!-- After -->
+      <div class="comparison-side comparison-after reveal-right">
+        <div class="comparison-label comparison-label--after">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          {t('comparison.after')}
+        </div>
+        <div class="comparison-after-terminal">
+          <Terminal title="clipr">
+            {afterSteps.map((step) => (
+              <div class={`terminal-line ${step.class}`}>{step.text}</div>
+            ))}
+          </Terminal>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: start;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .comparison-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .comparison-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+  }
+
+  .comparison-label--before {
+    color: var(--color-text-secondary);
+  }
+
+  .comparison-label--after {
+    color: #28c840;
+  }
+
+  /* Muted before side */
+  .comparison-before :global(.terminal) {
+    opacity: 0.6;
+    border-color: color-mix(in srgb, var(--color-border-default) 50%, transparent);
+  }
+
+  .comparison-before:hover :global(.terminal) {
+    opacity: 0.8;
+  }
+
+  /* Glow after side */
+  .comparison-after-terminal {
+    position: relative;
+  }
+
+  .comparison-after-terminal::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 14px;
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, #28c840 15%, transparent),
+      transparent 60%
+    );
+    z-index: -1;
+    filter: blur(1px);
+  }
+
+  .comparison-after-terminal :global(.terminal) {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, #28c840 20%, transparent),
+      0 0 30px -5px color-mix(in srgb, #28c840 15%, transparent);
+  }
+
+  /* Divider */
+  .comparison-divider {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 3rem;
+  }
+
+  .comparison-divider-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-border-default),
+      transparent
+    );
+  }
+
+  .comparison-divider-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--color-border-default);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+  }
+
+  @media (max-width: 768px) {
+    .comparison-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .comparison-divider {
+      flex-direction: row;
+      padding-top: 0;
+    }
+
+    .comparison-divider-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--color-border-default),
+        transparent
+      );
+    }
+
+    .comparison-before,
+    .comparison-after {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

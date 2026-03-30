@@ -1,0 +1,70 @@
+---
+import type { UrlEntry } from '@clipr/core';
+import CopyButton from '../ui/CopyButton.astro';
+
+interface Props {
+  link: UrlEntry;
+  baseUrl: string;
+}
+
+const { link, baseUrl } = Astro.props;
+const shortUrl = baseUrl ? `${baseUrl}/${link.slug}` : link.slug;
+const hasUtm = link.utm && Object.values(link.utm).some((v) => v);
+---
+
+<div class="glass glow-border" style="border-radius:var(--radius-md);padding:1.5rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+    <span style="font-family:var(--font-mono);font-size:1.125rem;font-weight:600;color:var(--color-brand);">{shortUrl}</span>
+    <div style="display:flex;gap:0.5rem;">
+      <CopyButton text={shortUrl} label="Copy short URL" />
+    </div>
+  </div>
+
+  <div style="display:grid;gap:1rem;">
+    <div>
+      <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);">Target</span>
+      <p style="margin:0.25rem 0 0;font-size:0.875rem;color:var(--color-text-primary);word-break:break-all;">{link.url}</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div>
+        <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);">Created</span>
+        <p style="margin:0.25rem 0 0;font-size:0.875rem;color:var(--color-text-primary);">{new Date(link.createdAt).toLocaleString()}</p>
+      </div>
+      <div>
+        <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);">Expires</span>
+        <p style="margin:0.25rem 0 0;font-size:0.875rem;color:var(--color-text-primary);">{link.expiresAt ? new Date(link.expiresAt).toLocaleString() : 'Never'}</p>
+      </div>
+    </div>
+
+    {link.description && (
+      <div>
+        <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);">Description</span>
+        <p style="margin:0.25rem 0 0;font-size:0.875rem;color:var(--color-text-primary);">{link.description}</p>
+      </div>
+    )}
+
+    {hasUtm && (
+      <div>
+        <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);">UTM Parameters</span>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;">
+          {Object.entries(link.utm!).map(([key, value]) =>
+            value ? (
+              <span style="padding:0.25rem 0.5rem;background:var(--color-bg-elevated);border-radius:var(--radius-sm);font-size:0.75rem;color:var(--color-text-secondary);">
+                <strong style="color:var(--color-text-primary);">{key}:</strong> {value}
+              </span>
+            ) : null
+          )}
+        </div>
+      </div>
+    )}
+
+    <!-- QR placeholder -->
+    <div style="padding:1rem;border:1px dashed var(--color-border-default);border-radius:var(--radius-sm);text-align:center;">
+      <p style="font-size:0.75rem;color:var(--color-text-secondary);margin:0;">QR Code</p>
+      <p style="font-size:0.625rem;color:var(--color-text-secondary);margin:0.25rem 0 0;">
+        Run <code style="font-family:var(--font-mono);padding:0.125rem 0.375rem;background:var(--color-bg-elevated);border-radius:0.25rem;">clipr qr {link.slug}</code>
+      </p>
+    </div>
+  </div>
+</div>
