@@ -1,12 +1,14 @@
 name: Deploy to GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
       - 'urls.json'
       - 'packages/web/**'
       - 'packages/core/**'
+      - 'pnpm-lock.yaml'
 
 permissions:
   contents: read
