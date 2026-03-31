@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.10
+
+### Patch Changes
+
+- feat: animated SVG logo + enhanced marquee with tech logos
+- Updated dependencies
+  - @clipr/core@0.0.10
+
 ## 0.0.9
 
 ### Patch Changes
