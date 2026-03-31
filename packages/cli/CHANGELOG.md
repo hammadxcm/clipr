@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.9
+
+### Patch Changes
+
+- fix: update shorten test for public endpoint, lint fixes
+- Updated dependencies
+  - @clipr/core@0.0.9
+
 ## 0.0.8
 
 ### Patch Changes
