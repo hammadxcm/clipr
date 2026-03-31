@@ -9,7 +9,7 @@
   "scripts": {
     "build": "pnpm --filter './packages/*' run build",
     "build:core": "pnpm --filter @clipr/core run build",
-    "build:cli": "pnpm --filter clipr run build",
+    "build:cli": "pnpm --filter clipr-cli run build",
     "build:web": "pnpm --filter @clipr/web run build",
     "build:worker": "pnpm --filter @clipr/worker run build",
     "dev:web": "pnpm --filter @clipr/web run dev",
