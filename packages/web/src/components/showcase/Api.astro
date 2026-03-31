@@ -11,28 +11,9 @@ interface Props {
 const { locale = 'en' } = Astro.props;
 const t = getTranslation(locale);
 
-const codeExample = [
-  { text: '// app.ts', class: 'terminal-output' },
-  {
-    text: "import { JsonBackend, validateUrl, appendUtm } from '@clipr/core';",
-    class: 'terminal-command',
-  },
-  { text: '', class: 'terminal-output' },
-  { text: "const backend = new JsonBackend('./urls.json');", class: 'terminal-command' },
-  { text: '', class: 'terminal-output' },
-  { text: '// Validate and shorten', class: 'terminal-output' },
-  { text: "const url = 'https://example.com/launch';", class: 'terminal-command' },
-  { text: 'if (validateUrl(url)) {', class: 'terminal-command' },
-  { text: '  const slug = await backend.shorten(url);', class: 'terminal-command' },
-  { text: '  console.log(`Created: ${slug}`);', class: 'terminal-success' },
-  { text: '}', class: 'terminal-command' },
-  { text: '', class: 'terminal-output' },
-  { text: '// Append UTM params', class: 'terminal-output' },
-  { text: 'const tracked = appendUtm(url, {', class: 'terminal-command' },
-  { text: "  source: 'twitter',", class: 'terminal-command' },
-  { text: "  medium: 'social',", class: 'terminal-command' },
-  { text: '});', class: 'terminal-command' },
-];
+// Syntax-highlighted code — each span gets a color class
+// Colors: kw=keyword, fn=function, str=string, cm=comment, op=operator, vr=variable, nr=number
+
 ---
 
 <section id="api">
@@ -63,9 +44,23 @@ const codeExample = [
       <!-- RIGHT: Code example -->
       <div class="api-code shadow-md reveal-right">
         <Terminal title="@clipr/core — usage example">
-          {codeExample.map((line) => (
-            <div class={`terminal-line ${line.class}`}>{line.text}</div>
-          ))}
+          <pre class="code-block"><code><span class="c-cm">// app.ts</span>
+<span class="c-kw">import</span> {'{'} <span class="c-fn">JsonBackend</span>, <span class="c-fn">validateUrl</span>, <span class="c-fn">appendUtm</span> {'}'} <span class="c-kw">from</span> <span class="c-str">'@clipr/core'</span>;
+
+<span class="c-kw">const</span> <span class="c-vr">backend</span> <span class="c-op">=</span> <span class="c-kw">new</span> <span class="c-fn">JsonBackend</span>(<span class="c-str">'./urls.json'</span>);
+
+<span class="c-cm">// Validate and shorten</span>
+<span class="c-kw">const</span> <span class="c-vr">url</span> <span class="c-op">=</span> <span class="c-str">'https://example.com/launch'</span>;
+<span class="c-kw">if</span> (<span class="c-fn">validateUrl</span>(<span class="c-vr">url</span>)) {'{'}
+  <span class="c-kw">const</span> <span class="c-vr">slug</span> <span class="c-op">=</span> <span class="c-kw">await</span> <span class="c-vr">backend</span>.<span class="c-fn">shorten</span>(<span class="c-vr">url</span>);
+  <span class="c-vr">console</span>.<span class="c-fn">log</span>(<span class="c-str">`Created: </span><span class="c-op">${'$'}{</span><span class="c-vr">slug</span><span class="c-op">}</span><span class="c-str">`</span>);
+{'}'}
+
+<span class="c-cm">// Append UTM params</span>
+<span class="c-kw">const</span> <span class="c-vr">tracked</span> <span class="c-op">=</span> <span class="c-fn">appendUtm</span>(<span class="c-vr">url</span>, {'{'}
+  <span class="c-vr">source</span>: <span class="c-str">'twitter'</span>,
+  <span class="c-vr">medium</span>: <span class="c-str">'social'</span>,
+{'}'});</code></pre>
         </Terminal>
       </div>
     </div>
@@ -165,6 +160,45 @@ const codeExample = [
   .api-install-hint code {
     color: var(--color-text-accent);
   }
+
+  /* Syntax highlighting colors */
+  .code-block {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .code-block code {
+    font-family: inherit;
+  }
+
+  .c-kw { color: #c792ea; }              /* keywords: import, const, if, await, new, from */
+  .c-fn { color: #82aaff; }              /* functions: JsonBackend, validateUrl, appendUtm */
+  .c-str { color: #c3e88d; }             /* strings: 'text' */
+  .c-cm { color: #546e7a; font-style: italic; } /* comments */
+  .c-op { color: #89ddff; }              /* operators: =, ${} */
+  .c-vr { color: #eeffff; }              /* variables: url, backend, slug */
+  .c-nr { color: #f78c6c; }              /* numbers */
+
+  /* Theme-aware overrides */
+  [data-theme="matrix"] .c-kw { color: #00ff41; }
+  [data-theme="matrix"] .c-fn { color: #39ff14; }
+  [data-theme="matrix"] .c-str { color: #7cfc00; }
+  [data-theme="matrix"] .c-cm { color: #00c818; }
+
+  [data-theme="dracula"] .c-kw { color: #ff79c6; }
+  [data-theme="dracula"] .c-fn { color: #50fa7b; }
+  [data-theme="dracula"] .c-str { color: #f1fa8c; }
+
+  [data-theme="arctic"] .c-kw { color: #0369a1; }
+  [data-theme="arctic"] .c-fn { color: #0ea5e9; }
+  [data-theme="arctic"] .c-str { color: #059669; }
+  [data-theme="arctic"] .c-vr { color: #0f172a; }
+  [data-theme="arctic"] .c-cm { color: #94a3b8; }
 
   /* Code side */
   .api-code {
