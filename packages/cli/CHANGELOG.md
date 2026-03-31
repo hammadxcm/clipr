@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.3
+
+### Patch Changes
+
+- fix: rename CLI package to clipr-cli (clipr taken on npm)
+- Updated dependencies
+  - @clipr/core@0.0.3
+
 ## 0.0.2
 
 ### Patch Changes
