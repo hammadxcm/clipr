@@ -30,15 +30,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Auto-create a patch changeset if none exists
+      # Auto-create a patch changeset if none exists (skip for version bump commits)
       - name: Auto-create changeset
         run: |
+          LAST_MSG=$(git log -1 --pretty=%s)
+          if echo "$LAST_MSG" | grep -q "chore(release): version packages"; then
+            echo "Version bump commit — skipping auto-changeset (publish will happen instead)"
+            exit 0
+          fi
           CHANGESETS=$(ls .changeset/*.md 2>/dev/null | grep -v README | wc -l | tr -d ' ')
           if [ "$CHANGESETS" = "0" ]; then
             echo "No changesets found. Creating auto patch changeset..."
-            MSG=$(git log -1 --pretty=%s)
             FILENAME=".changeset/auto-$(date +%s).md"
-            printf '%s\n' '---' '"clipr-cli": patch' '"@clipr/core": patch' '---' '' "$MSG" > "$FILENAME"
+            printf '%s\n' '---' '"clipr-cli": patch' '"@clipr/core": patch' '---' '' "$LAST_MSG" > "$FILENAME"
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .changeset/
@@ -88,7 +92,7 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         run: |
           VERSION=$(cat packages/cli/package.json | grep '"version"' | head -1 | sed 's/.*"version": *"//;s/".*//')
-          SHA=$(npm view clipr@${VERSION} dist.shasum 2>/dev/null || echo "")
+          SHA=$(npm view clipr-cli@${VERSION} dist.shasum 2>/dev/null || echo "")
 
           if [ -n "$SHA" ]; then
             # Clone tap repo and update formula
@@ -101,7 +105,7 @@ jobs:
           class Clipr < Formula
             desc "A fast, git-friendly URL shortener"
             homepage "https://github.com/hammadxcm/clipr"
-            url "https://registry.npmjs.org/clipr/-/clipr-${VERSION}.tgz"
+            url "https://registry.npmjs.org/clipr-cli/-/clipr-cli-${VERSION}.tgz"
             sha256 "${SHA}"
             license "MIT"
 
