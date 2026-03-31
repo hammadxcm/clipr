@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { authMiddleware } from './middleware/auth.js';
+import { rateLimitMiddleware } from './middleware/rate-limit.js';
 import { handleHealth } from './routes/health.js';
 import { handleExport, handleImport } from './routes/import-export.js';
 import {
@@ -37,8 +38,8 @@ app.get('/health', handleHealth);
 app.get('/password/:code', handlePasswordPage);
 app.post('/password/:code', handlePasswordVerify);
 
-// --- API routes (protected by auth middleware) ---
-app.post('/api/shorten', handleShorten);
+// --- Public API (rate-limited, no auth) ---
+app.post('/api/shorten', rateLimitMiddleware, handleShorten);
 
 app.get('/api/links', handleListLinks);
 app.get('/api/links/:code', handleGetLink);

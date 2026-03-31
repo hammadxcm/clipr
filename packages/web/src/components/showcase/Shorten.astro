@@ -7,7 +7,8 @@ interface Props {
 }
 
 const { locale = 'en' } = Astro.props;
-const baseUrl = siteConfig.url || 'https://clipr.sh';
+const baseUrl = siteConfig.url || 'https://clipr.fyniti.co.uk';
+const apiUrl = 'https://clipr.hammadkhanxcm.workers.dev';
 ---
 
 <section id="shorten" class="section-surface" style="padding:3rem 0;">
@@ -71,7 +72,7 @@ const baseUrl = siteConfig.url || 'https://clipr.sh';
       </div>
 
       <p style="margin:1rem 0 0;font-size:0.75rem;color:var(--color-text-secondary);text-align:center;opacity:0.6;">
-        Demo mode — install <code style="font-family:var(--font-mono);padding:0.1rem 0.35rem;background:var(--color-bg-elevated);border-radius:0.25rem;">clipr</code> to create persistent short links.
+        Free &middot; No signup &middot; 100 URLs/hour &middot; Powered by Cloudflare Workers
       </p>
     </div>
   </div>
@@ -104,20 +105,8 @@ const baseUrl = siteConfig.url || 'https://clipr.sh';
   }
 </style>
 
-<script define:vars={{ baseUrl }}>
+<script define:vars={{ apiUrl }}>
   document.addEventListener('DOMContentLoaded', function() {
-    var SLUG_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
-
-    function generateSlug(length) {
-      var bytes = new Uint8Array(length || 6);
-      crypto.getRandomValues(bytes);
-      var slug = '';
-      for (var i = 0; i < bytes.length; i++) {
-        slug += SLUG_ALPHABET[bytes[i] % SLUG_ALPHABET.length];
-      }
-      return slug;
-    }
-
     var form = document.getElementById('shorten-form');
     var result = document.getElementById('shorten-result');
     var urlInput = document.getElementById('url-input');
@@ -130,43 +119,60 @@ const baseUrl = siteConfig.url || 'https://clipr.sh';
 
     if (!shortenBtn || !urlInput) return;
 
-    shortenBtn.addEventListener('click', function() {
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+      errorEl.classList.add('animate-shake');
+      setTimeout(function() { errorEl.classList.remove('animate-shake'); }, 500);
+    }
+
+    shortenBtn.addEventListener('click', async function() {
       var url = urlInput.value.trim();
       errorEl.style.display = 'none';
 
-      if (!url) {
-        errorEl.textContent = 'Please enter a URL';
-        errorEl.style.display = 'block';
-        errorEl.classList.add('animate-shake'); setTimeout(function() { errorEl.classList.remove('animate-shake'); }, 500);
-        return;
-      }
+      if (!url) { showError('Please enter a URL'); return; }
 
       try {
         var parsed = new URL(url);
         if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-          errorEl.textContent = 'Only http and https URLs are supported';
-          errorEl.style.display = 'block';
+          showError('Only http and https URLs are supported');
           return;
         }
+      } catch (e) { showError('Please enter a valid URL'); return; }
+
+      shortenBtn.textContent = 'Shortening...';
+      shortenBtn.disabled = true;
+
+      try {
+        var res = await fetch(apiUrl + '/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url }),
+        });
+        var data = await res.json();
+
+        if (!res.ok) {
+          showError(data.error || 'Failed to shorten URL');
+          shortenBtn.textContent = 'Shorten';
+          shortenBtn.disabled = false;
+          return;
+        }
+
+        resultUrl.textContent = data.shortUrl;
+        resultOriginal.textContent = url;
+        form.style.display = 'none';
+        result.style.display = 'block';
+        result.classList.add('animate-scale-in');
+
+        if (typeof window.showToast === 'function') {
+          window.showToast('Short URL created!', 'success');
+        }
       } catch (e) {
-        errorEl.textContent = 'Please enter a valid URL';
-        errorEl.style.display = 'block';
-        errorEl.classList.add('animate-shake'); setTimeout(function() { errorEl.classList.remove('animate-shake'); }, 500);
-        return;
+        showError('Network error — please try again');
       }
 
-      var slug = generateSlug(6);
-      var shortUrl = baseUrl + '/' + slug;
-
-      resultUrl.textContent = shortUrl;
-      resultOriginal.textContent = url;
-      form.style.display = 'none';
-      result.style.display = 'block';
-      result.classList.add('animate-scale-in');
-
-      if (typeof window.showToast === 'function') {
-        window.showToast('Short URL generated!', 'success');
-      }
+      shortenBtn.textContent = 'Shorten';
+      shortenBtn.disabled = false;
     });
 
     urlInput.addEventListener('keydown', function(e) {

@@ -5,6 +5,7 @@ import type { Env } from '../types.js';
 const PUBLIC_PATTERNS = [
   /^\/health$/,
   /^\/password\/[^/]+$/,
+  /^\/api\/shorten$/, // POST /api/shorten is public (rate-limited separately)
   /^\/[^/]+$/, // GET /:slug redirect
 ];
 
@@ -20,20 +21,14 @@ export async function authMiddleware(
   const path = new URL(c.req.url).pathname;
   const method = c.req.method;
 
-  // Skip auth for public routes
-  if (method === 'GET') {
-    for (const pattern of PUBLIC_PATTERNS) {
-      if (pattern.test(path)) {
+  // Skip auth for public routes (GET + specific POST routes)
+  for (const pattern of PUBLIC_PATTERNS) {
+    if (pattern.test(path)) {
+      if (method === 'GET' || method === 'POST') {
         await next();
         return;
       }
     }
-  }
-
-  // POST /password/:code is also public
-  if (method === 'POST' && /^\/password\/[^/]+$/.test(path)) {
-    await next();
-    return;
   }
 
   const authHeader = c.req.header('Authorization');
