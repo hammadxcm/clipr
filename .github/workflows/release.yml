@@ -30,28 +30,20 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Auto-create a patch changeset if none exists in this push
+      # Auto-create a patch changeset if none exists
       - name: Auto-create changeset
         run: |
-          # Check if there are any pending changesets
           CHANGESETS=$(ls .changeset/*.md 2>/dev/null | grep -v README | wc -l | tr -d ' ')
           if [ "$CHANGESETS" = "0" ]; then
             echo "No changesets found. Creating auto patch changeset..."
-            # Get the commit message for the changeset description
             MSG=$(git log -1 --pretty=%s)
-            cat > ".changeset/auto-$(date +%s).md" << CHANGESET
-          ---
-          "clipr": patch
-          "@clipr/core": patch
-          ---
-
-          $MSG
-          CHANGESET
+            FILENAME=".changeset/auto-$(date +%s).md"
+            printf '%s\n' '---' '"clipr": patch' '"@clipr/core": patch' '---' '' "$MSG" > "$FILENAME"
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .changeset/
-            git commit -m "chore: auto-create patch changeset"
-            git push
+            git commit -m "chore: auto-create patch changeset" || echo "No changes to commit"
+            git push || echo "Nothing to push"
           fi
 
       - run: pnpm build:core
