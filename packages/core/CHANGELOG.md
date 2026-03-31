@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.4
+
+### Patch Changes
+
+- fix: skip auto-changeset on version bump commits, fix npm package name in homebrew
+
 ## 0.0.3
 
 ### Patch Changes
