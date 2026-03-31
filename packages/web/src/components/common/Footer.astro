@@ -1,5 +1,6 @@
 ---
 import { footerLinks, siteConfig } from '../../data/site';
+import Logo from '../ui/Logo.astro';
 ---
 
 <footer class="accent-border-top" style="padding:3rem 0;margin-top:4rem;">
@@ -8,7 +9,7 @@ import { footerLinks, siteConfig } from '../../data/site';
       <!-- Brand -->
       <div>
         <a href="/" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;font-size:1.125rem;font-weight:600;color:var(--color-text-primary);margin-bottom:1rem;">
-          <span style="display:inline-flex;height:1.5rem;width:1.5rem;align-items:center;justify-content:center;border-radius:0.375rem;background:var(--color-brand);color:#fff;font-size:0.625rem;font-weight:700;">c</span>
+          <Logo size={18} />
           <span>clipr</span>
         </a>
         <p style="font-size:0.875rem;color:var(--color-text-secondary);line-height:1.6;max-width:280px;">
