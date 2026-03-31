@@ -1,6 +1,6 @@
 {
   "name": "@clipr/worker",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Cloudflare Worker for clipr URL redirects",
   "type": "module",
   "main": "./src/index.ts",
