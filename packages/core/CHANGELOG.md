@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.7
+
+### Patch Changes
+
+- chore(release): publish v0.0.6 — fix workspace:\* in npm tarball
+
 ## 0.0.5
 
 ### Patch Changes
