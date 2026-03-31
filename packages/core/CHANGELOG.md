@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.5
+
+### Patch Changes
+
+- fix: use GITHUB_TOKEN for changesets PR creation, PAT for checkout
+
 ## 0.0.4
 
 ### Patch Changes
