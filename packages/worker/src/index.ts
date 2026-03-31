@@ -19,12 +19,15 @@ import type { Env } from './types.js';
 const app = new Hono<{ Bindings: Env }>();
 
 // CORS — restrict API access
-app.use('/api/*', cors({
-  origin: (origin) => origin || '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Authorization', 'Content-Type'],
-  maxAge: 86400,
-}));
+app.use(
+  '/api/*',
+  cors({
+    origin: (origin) => origin || '*',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Authorization', 'Content-Type'],
+    maxAge: 86400,
+  }),
+);
 
 // Auth middleware — applied to all routes, skips public ones internally
 app.use('*', authMiddleware);

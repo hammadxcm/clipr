@@ -8,10 +8,34 @@ const SLUG_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
 const DEFAULT_SLUG_LENGTH = 6;
 const MAX_URL_LENGTH = 2048;
 const RESERVED_SLUGS = new Set([
-  'api', 'admin', 'dashboard', 'health', 'login', 'logout', 'signup',
-  'settings', 'shorten', 'password', 'static', 'assets', 'favicon.ico',
-  'robots.txt', 'sitemap.xml', 'sitemap-index.xml',
-  'en', 'es', 'fr', 'de', 'pt', 'ru', 'zh', 'hi', 'ar', 'ur', 'bn', 'ja',
+  'api',
+  'admin',
+  'dashboard',
+  'health',
+  'login',
+  'logout',
+  'signup',
+  'settings',
+  'shorten',
+  'password',
+  'static',
+  'assets',
+  'favicon.ico',
+  'robots.txt',
+  'sitemap.xml',
+  'sitemap-index.xml',
+  'en',
+  'es',
+  'fr',
+  'de',
+  'pt',
+  'ru',
+  'zh',
+  'hi',
+  'ar',
+  'ur',
+  'bn',
+  'ja',
 ]);
 
 export type ShortenError =
@@ -90,7 +114,8 @@ function validateUrl(url: string): string | null {
   if (!url || url.length > MAX_URL_LENGTH) return 'URL is empty or too long';
   try {
     const parsed = new URL(url);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return 'Only http/https URLs allowed';
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')
+      return 'Only http/https URLs allowed';
     return null;
   } catch {
     return 'Not a valid URL';
@@ -100,7 +125,8 @@ function validateUrl(url: string): string | null {
 function validateSlug(slug: string): string | null {
   if (slug.length < 3) return 'Slug must be at least 3 characters';
   if (slug.length > 32) return 'Slug must be at most 32 characters';
-  if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$/.test(slug)) return 'Slug must be lowercase letters, numbers, and hyphens';
+  if (!/^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$/.test(slug))
+    return 'Slug must be lowercase letters, numbers, and hyphens';
   if (RESERVED_SLUGS.has(slug)) return 'This slug is reserved';
   return null;
 }
@@ -115,21 +141,32 @@ function decodeBase64(b64: string): string {
 }
 
 // GitHub Contents API
-async function fetchUrlsJson(config: GithubConfig, token: string): Promise<{ content: UrlDatabase; sha: string }> {
+async function fetchUrlsJson(
+  config: GithubConfig,
+  token: string,
+): Promise<{ content: UrlDatabase; sha: string }> {
   const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}?ref=${config.branch}`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json' },
   });
 
-  if (res.status === 401 || res.status === 403) throw { error: 'AUTH_FAILED' as ShortenError, message: 'Invalid or expired GitHub token' };
-  if (!res.ok) throw { error: 'GITHUB_ERROR' as ShortenError, message: `GitHub API error: ${res.status}` };
+  if (res.status === 401 || res.status === 403)
+    throw { error: 'AUTH_FAILED' as ShortenError, message: 'Invalid or expired GitHub token' };
+  if (!res.ok)
+    throw { error: 'GITHUB_ERROR' as ShortenError, message: `GitHub API error: ${res.status}` };
 
   const data = await res.json();
   const decoded = decodeBase64(data.content);
   return { content: JSON.parse(decoded) as UrlDatabase, sha: data.sha };
 }
 
-async function commitUrlsJson(config: GithubConfig, token: string, content: UrlDatabase, sha: string, message: string): Promise<void> {
+async function commitUrlsJson(
+  config: GithubConfig,
+  token: string,
+  content: UrlDatabase,
+  sha: string,
+  message: string,
+): Promise<void> {
   const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.path}`;
   const body = JSON.stringify({
     message,
@@ -140,13 +177,23 @@ async function commitUrlsJson(config: GithubConfig, token: string, content: UrlD
 
   const res = await fetch(url, {
     method: 'PUT',
-    headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    },
     body,
   });
 
-  if (res.status === 409) throw { error: 'SHA_CONFLICT' as ShortenError, message: 'File was modified concurrently. Retrying...' };
-  if (res.status === 401 || res.status === 403) throw { error: 'AUTH_FAILED' as ShortenError, message: 'Token lacks permission to write' };
-  if (!res.ok) throw { error: 'GITHUB_ERROR' as ShortenError, message: `GitHub API error: ${res.status}` };
+  if (res.status === 409)
+    throw {
+      error: 'SHA_CONFLICT' as ShortenError,
+      message: 'File was modified concurrently. Retrying...',
+    };
+  if (res.status === 401 || res.status === 403)
+    throw { error: 'AUTH_FAILED' as ShortenError, message: 'Token lacks permission to write' };
+  if (!res.ok)
+    throw { error: 'GITHUB_ERROR' as ShortenError, message: `GitHub API error: ${res.status}` };
 }
 
 // Main shortener function
@@ -207,7 +254,11 @@ export async function shortenUrl(
         slug = undefined; // Regenerate slug on retry
         continue;
       }
-      return { ok: false, error: e.error || 'NETWORK_ERROR', message: e.message || 'Network error' };
+      return {
+        ok: false,
+        error: e.error || 'NETWORK_ERROR',
+        message: e.message || 'Network error',
+      };
     }
   }
 
