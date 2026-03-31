@@ -144,7 +144,8 @@ const tabLabels: Record<string, string> = {
 
   .install-radio:checked + label {
     color: var(--color-brand);
-    border-bottom-color: var(--color-brand);
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, var(--color-brand), var(--color-brand-light)) 1;
   }
 
   /* Panels */

@@ -64,4 +64,26 @@ describe('shorten command', () => {
     await shorten('https://example.com', backend, { slug: 'A!' });
     expect(process.exit).toHaveBeenCalledWith(1);
   });
+
+  it('does not attach utm when no utm options are provided', async () => {
+    await shorten('https://example.com', backend, { slug: 'no-utm' });
+    const entry = await backend.get('no-utm');
+    expect(entry?.utm).toBeUndefined();
+  });
+
+  it('shows slug only when baseUrl is not set', async () => {
+    const logSpy = vi.mocked(console.log);
+    await shorten('https://example.com', backend, { slug: 'bare' });
+    // Without baseUrl, the output should contain just the slug
+    const logged = logSpy.mock.calls.map((c) => c.join(' ')).join('\n');
+    expect(logged).toContain('bare');
+  });
+
+  it('shows full short URL when baseUrl is set', async () => {
+    await backend.setBaseUrl('https://clpr.sh');
+    const logSpy = vi.mocked(console.log);
+    await shorten('https://example.com', backend, { slug: 'base-test' });
+    const logged = logSpy.mock.calls.map((c) => c.join(' ')).join('\n');
+    expect(logged).toContain('https://clpr.sh/base-test');
+  });
 });

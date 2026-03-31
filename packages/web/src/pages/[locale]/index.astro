@@ -7,7 +7,9 @@ import Api from '../../components/showcase/Api.astro';
 import Comparison from '../../components/showcase/Comparison.astro';
 import Demo from '../../components/showcase/Demo.astro';
 import Install from '../../components/showcase/Install.astro';
+import Marquee from '../../components/showcase/Marquee.astro';
 import Shorten from '../../components/showcase/Shorten.astro';
+import Stats from '../../components/showcase/Stats.astro';
 import Toast from '../../components/ui/Toast.astro';
 import { locales } from '../../i18n/index';
 import Layout from '../../layouts/Layout.astro';
@@ -23,8 +25,10 @@ const { locale } = Astro.params;
   <Nav locale={locale} />
   <main>
     <Hero locale={locale} />
+    <Marquee />
     <Shorten locale={locale} />
     <Features locale={locale} />
+    <Stats />
     <Comparison locale={locale} />
     <Install locale={locale} />
     <Demo locale={locale} />

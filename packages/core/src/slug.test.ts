@@ -44,6 +44,11 @@ describe('decodeSlug', () => {
   it('returns null for invalid slugs', () => {
     expect(decodeSlug('')).toBeNull();
   });
+
+  it('returns null when decode produces empty result', () => {
+    // Characters not in the Sqids alphabet produce an empty decode
+    expect(decodeSlug('!!!!')).toBeNull();
+  });
 });
 
 describe('generateRandomSlug', () => {

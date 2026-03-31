@@ -78,6 +78,12 @@ describe('JsonBackend', () => {
     expect(await backend.getBaseUrl()).toBe('https://clpr.sh');
   });
 
+  it('re-throws non-ENOENT errors from read', async () => {
+    // Use a path that triggers a non-ENOENT error (directory instead of file)
+    const badBackend = new JsonBackend(dir);
+    await expect(badBackend.get('any')).rejects.toThrow();
+  });
+
   it('updates counter on set and delete', async () => {
     await backend.set(makeEntry('one'));
     await backend.set(makeEntry('two'));

@@ -1,0 +1,95 @@
+---
+const stats = [
+  { value: 87, label: 'Tests Passing', suffix: '' },
+  { value: 15, label: 'Themes', suffix: '' },
+  { value: 12, label: 'Languages', suffix: '' },
+  { value: 13, label: 'CLI Commands', suffix: '' },
+  { value: 4, label: 'Packages', suffix: '' },
+];
+---
+
+<section id="stats" class="section" style="padding:3rem 1.5rem;">
+  <div class="reveal" style="display:grid;grid-template-columns:repeat(5,1fr);gap:1.5rem;max-width:900px;margin:0 auto;text-align:center;">
+    {stats.map((stat, i) => (
+      <div
+        class="stat-card glass"
+        style={`padding:1.5rem 1rem;border-radius:var(--radius-md);transition-delay:${i * 0.1}s;`}
+        data-target={stat.value}
+      >
+        <div class="stat-value gradient-text" style="font-size:2.5rem;font-weight:800;line-height:1;margin-bottom:0.5rem;">
+          <span class="stat-number">0</span>{stat.suffix}
+        </div>
+        <div style="font-size:0.8rem;color:var(--color-text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;">
+          {stat.label}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .stat-card {
+    transition: transform 0.3s var(--ease-out-expo), border-color 0.3s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-border-hover);
+  }
+
+  @media (max-width: 768px) {
+    #stats > div {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #stats > div {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+</style>
+
+<script>
+  function animateCounters() {
+    const cards = document.querySelectorAll('.stat-card');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const card = entry.target as HTMLElement;
+          const target = parseInt(card.dataset.target || '0', 10);
+          const numberEl = card.querySelector('.stat-number');
+          if (!numberEl) return;
+
+          let current = 0;
+          const duration = 1500;
+          const step = target / (duration / 16);
+
+          function tick() {
+            current += step;
+            if (current >= target) {
+              (numberEl as HTMLElement).textContent = String(target);
+              return;
+            }
+            (numberEl as HTMLElement).textContent = String(Math.floor(current));
+            requestAnimationFrame(tick);
+          }
+
+          requestAnimationFrame(tick);
+          observer.unobserve(card);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    cards.forEach((card) => observer.observe(card));
+  }
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', animateCounters);
+    } else {
+      animateCounters();
+    }
+  }
+</script>

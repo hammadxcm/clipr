@@ -14,8 +14,12 @@ export function createMockKV(): KVNamespace {
       store.delete(key);
       return Promise.resolve();
     },
-    list(): Promise<KVNamespaceListResult<unknown, string>> {
-      const keys = [...store.keys()].map((name) => ({ name }));
+    list(opts?: { prefix?: string }): Promise<KVNamespaceListResult<unknown, string>> {
+      let storeKeys = [...store.keys()];
+      if (opts?.prefix) {
+        storeKeys = storeKeys.filter((k) => k.startsWith(opts.prefix!));
+      }
+      const keys = storeKeys.map((name) => ({ name }));
       return Promise.resolve({
         keys,
         list_complete: true,

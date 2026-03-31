@@ -26,7 +26,7 @@ import { footerLinks, siteConfig } from '../../data/site';
       <div>
         <h3 style="font-size:0.9375rem;font-weight:600;color:var(--color-text-primary);margin-bottom:1rem;">Quick Links</h3>
         {footerLinks.quickLinks.map((link) => (
-          <a href={link.href} style="display:block;font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;padding:0.25rem 0;transition:color 0.2s;">
+          <a href={link.href} class="link-hover" style="display:block;font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;padding:0.25rem 0;transition:color 0.2s;">
             {link.label}
           </a>
         ))}
@@ -36,7 +36,7 @@ import { footerLinks, siteConfig } from '../../data/site';
       <div>
         <h3 style="font-size:0.9375rem;font-weight:600;color:var(--color-text-primary);margin-bottom:1rem;">Resources</h3>
         {footerLinks.resources.map((link) => (
-          <a href={link.href} target="_blank" rel="noopener" style="display:block;font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;padding:0.25rem 0;transition:color 0.2s;">
+          <a href={link.href} target="_blank" rel="noopener" class="link-hover" style="display:block;font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;padding:0.25rem 0;transition:color 0.2s;">
             {link.label}
           </a>
         ))}
@@ -46,7 +46,7 @@ import { footerLinks, siteConfig } from '../../data/site';
       <div>
         <h3 style="font-size:0.9375rem;font-weight:600;color:var(--color-text-primary);margin-bottom:1rem;">Connect</h3>
         {footerLinks.connect.map((link) => (
-          <a href={link.href} target="_blank" rel="noopener" style="display:block;font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;padding:0.25rem 0;transition:color 0.2s;">
+          <a href={link.href} target="_blank" rel="noopener" class="link-hover" style="display:block;font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;padding:0.25rem 0;transition:color 0.2s;">
             {link.label}
           </a>
         ))}
@@ -65,6 +65,10 @@ import { footerLinks, siteConfig } from '../../data/site';
 <style>
   footer a:hover {
     color: var(--color-brand) !important;
+  }
+
+  footer a[aria-label]:hover {
+    transform: scale(1.1);
   }
 
   @media (max-width: 768px) {

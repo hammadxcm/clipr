@@ -20,7 +20,7 @@ const t = getTranslation(locale);
     <div class="features-grid stagger">
       {features.map((feature, i) => (
         <div
-          class="feature-card glass glass-shimmer glow-border reveal"
+          class="feature-card glass glass-shimmer glow-border card-hover shadow-md reveal"
           style={`--stagger-index: ${i};`}
         >
           <div class="feature-icon">{feature.icon}</div>
@@ -62,6 +62,7 @@ const t = getTranslation(locale);
 
   .feature-card:hover {
     transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.3);
   }
 
   .feature-icon {
@@ -75,6 +76,11 @@ const t = getTranslation(locale);
     background: color-mix(in srgb, var(--color-brand) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--color-brand) 12%, transparent);
     flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .feature-card:hover .feature-icon {
+    transform: scale(1.15);
   }
 
   .feature-title {

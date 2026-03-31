@@ -1,0 +1,76 @@
+---
+const techs = [
+  { name: 'TypeScript', icon: 'TS' },
+  { name: 'Cloudflare Workers', icon: 'CF' },
+  { name: 'Astro', icon: '🚀' },
+  { name: 'Hono', icon: '🔥' },
+  { name: 'pnpm', icon: '📦' },
+  { name: 'Biome', icon: '🌿' },
+  { name: 'Vitest', icon: '⚡' },
+  { name: 'Sqids', icon: '#' },
+  { name: 'Tailwind CSS', icon: '🎨' },
+  { name: 'Changesets', icon: '📝' },
+];
+---
+
+<section class="marquee-section" style="padding:1.5rem 0;overflow:hidden;border-top:1px solid var(--color-border-default);border-bottom:1px solid var(--color-border-default);">
+  <div style="display:flex;align-items:center;overflow:hidden;mask-image:linear-gradient(to right, transparent, black 10%, black 90%, transparent);-webkit-mask-image:linear-gradient(to right, transparent, black 10%, black 90%, transparent);">
+    <div class="marquee-track">
+      {[...techs, ...techs].map((tech) => (
+        <span class="marquee-item">
+          <span class="marquee-icon">{tech.icon}</span>
+          <span class="marquee-name">{tech.name}</span>
+        </span>
+      ))}
+    </div>
+    <div class="marquee-track" aria-hidden="true">
+      {[...techs, ...techs].map((tech) => (
+        <span class="marquee-item">
+          <span class="marquee-icon">{tech.icon}</span>
+          <span class="marquee-name">{tech.name}</span>
+        </span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .marquee-track {
+    display: flex;
+    gap: 3rem;
+    padding: 0 1.5rem;
+    animation: marquee-scroll 30s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    opacity: 0.5;
+    transition: opacity 0.3s ease, color 0.3s ease;
+  }
+
+  .marquee-item:hover {
+    opacity: 1;
+    color: var(--color-brand);
+  }
+
+  .marquee-icon {
+    font-size: 1.125rem;
+  }
+
+  .marquee-name {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+</style>

@@ -21,7 +21,7 @@ const { locale = 'en' } = Astro.props;
     <!-- Desktop nav -->
     <div id="nav-menu" style="display:none;align-items:center;gap:1.5rem;" class="desktop-nav">
       {navLinks.map((link) => (
-        <a href={link.href} class="nav-link" data-i18n={link.label} style="font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;transition:color 0.2s;">
+        <a href={link.href} class="nav-link link-hover" data-i18n={link.label} style="font-size:0.875rem;color:var(--color-text-secondary);text-decoration:none;transition:color 0.2s;">
           {link.label.split('.').pop()}
         </a>
       ))}
@@ -84,6 +84,7 @@ const { locale = 'en' } = Astro.props;
 
   #main-nav.scrolled {
     border-bottom: 1px solid var(--color-border-default);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
 
   #nav-toggle.open .hamburger-line:nth-child(1) {
