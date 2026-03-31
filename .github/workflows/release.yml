@@ -1,0 +1,138 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Version & Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: pnpm install --frozen-lockfile
+
+      # Auto-create a patch changeset if none exists in this push
+      - name: Auto-create changeset
+        run: |
+          # Check if there are any pending changesets
+          CHANGESETS=$(ls .changeset/*.md 2>/dev/null | grep -v README | wc -l | tr -d ' ')
+          if [ "$CHANGESETS" = "0" ]; then
+            echo "No changesets found. Creating auto patch changeset..."
+            # Get the commit message for the changeset description
+            MSG=$(git log -1 --pretty=%s)
+            cat > ".changeset/auto-$(date +%s).md" << CHANGESET
+          ---
+          "clipr": patch
+          "@clipr/core": patch
+          ---
+
+          $MSG
+          CHANGESET
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .changeset/
+            git commit -m "chore: auto-create patch changeset"
+            git push
+          fi
+
+      - run: pnpm build:core
+      - run: pnpm build:cli
+
+      # Changesets action: creates "Version Packages" PR or publishes
+      - name: Create Release PR or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm release
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # Create GitHub Release after publish
+      - name: Create GitHub Release
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          # Get the CLI version
+          VERSION=$(cat packages/cli/package.json | grep '"version"' | head -1 | sed 's/.*"version": *"//;s/".*//')
+          TAG="v${VERSION}"
+
+          # Create git tag
+          git tag "$TAG"
+          git push origin "$TAG"
+
+          # Create GitHub Release
+          gh release create "$TAG" \
+            --title "clipr $TAG" \
+            --generate-notes \
+            --latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Update Homebrew tap after publish
+      - name: Update Homebrew Tap
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          VERSION=$(cat packages/cli/package.json | grep '"version"' | head -1 | sed 's/.*"version": *"//;s/".*//')
+          SHA=$(npm view clipr@${VERSION} dist.shasum 2>/dev/null || echo "")
+
+          if [ -n "$SHA" ]; then
+            # Clone tap repo and update formula
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/hammadxcm/homebrew-tap.git /tmp/homebrew-tap || true
+
+            if [ -d /tmp/homebrew-tap ]; then
+              mkdir -p /tmp/homebrew-tap/Formula
+
+              cat > /tmp/homebrew-tap/Formula/clipr.rb << FORMULA
+          class Clipr < Formula
+            desc "A fast, git-friendly URL shortener"
+            homepage "https://github.com/hammadxcm/clipr"
+            url "https://registry.npmjs.org/clipr/-/clipr-${VERSION}.tgz"
+            sha256 "${SHA}"
+            license "MIT"
+
+            depends_on "node@22"
+
+            def install
+              system "npm", "install", *std_npm_args
+              bin.install_symlink Dir["\#{libexec}/bin/*"]
+            end
+
+            test do
+              assert_match "clipr", shell_output("\#{bin}/clipr --version")
+            end
+          end
+          FORMULA
+
+              cd /tmp/homebrew-tap
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git add -A
+              git commit -m "clipr ${VERSION}" || true
+              git push || true
+            fi
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
