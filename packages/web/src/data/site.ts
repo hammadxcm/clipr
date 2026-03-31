@@ -3,7 +3,7 @@ export const siteConfig = {
   tagline: 'Short links, full control.',
   description:
     'A fast, git-friendly URL shortener. Manage short links from your terminal, store them in version-controlled JSON, and serve redirects from a Cloudflare Worker.',
-  url: 'https://clipr.sh',
+  url: 'https://clipr.fyniti.co.uk',
   github: 'https://github.com/hammadxcm/clipr',
   npm: 'https://www.npmjs.com/package/clipr',
 };
