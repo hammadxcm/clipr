@@ -50,14 +50,22 @@ describe('list command', () => {
   });
 
   it('shows slug only when baseUrl is empty', async () => {
-    await backend.set({ slug: 'nobase', url: 'https://x.com', createdAt: new Date().toISOString() });
+    await backend.set({
+      slug: 'nobase',
+      url: 'https://x.com',
+      createdAt: new Date().toISOString(),
+    });
     await list(backend);
     expect(logs.some((l) => l.includes('nobase'))).toBe(true);
   });
 
   it('shows full short URL when baseUrl is set', async () => {
     await backend.setBaseUrl('https://clpr.sh');
-    await backend.set({ slug: 'withbase', url: 'https://x.com', createdAt: new Date().toISOString() });
+    await backend.set({
+      slug: 'withbase',
+      url: 'https://x.com',
+      createdAt: new Date().toISOString(),
+    });
     await list(backend);
     expect(logs.some((l) => l.includes('https://clpr.sh/withbase'))).toBe(true);
   });

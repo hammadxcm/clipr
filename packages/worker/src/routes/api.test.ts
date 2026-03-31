@@ -1,5 +1,5 @@
 import type { ShortUrl } from '@clipr/core';
-import { describe, expect, it, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import app from '../index.js';
 import { createMockKV } from '../test-utils.js';
 
@@ -107,17 +107,17 @@ describe('POST /api/shorten', () => {
     expect(body.error).toMatch(/Invalid JSON/);
   });
 
-  it('rejects request without auth', async () => {
+  it('allows request without auth (public endpoint)', async () => {
     const res = await app.request(
       '/api/shorten',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: 'https://example.com' }),
+        body: JSON.stringify({ url: 'https://example.com/public-test' }),
       },
       ENV(kv),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(201);
   });
 
   it('rejects duplicate custom slug', async () => {
@@ -186,11 +186,7 @@ describe('GET /api/links', () => {
   });
 
   it('lists all links', async () => {
-    const res = await app.request(
-      '/api/links',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveLength(2);
@@ -198,22 +194,14 @@ describe('GET /api/links', () => {
 
   it('returns empty array when no links exist', async () => {
     const emptyKv = createMockKV();
-    const res = await app.request(
-      '/api/links',
-      { headers: AUTH },
-      ENV(emptyKv),
-    );
+    const res = await app.request('/api/links', { headers: AUTH }, ENV(emptyKv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toEqual([]);
   });
 
   it('filters by search query', async () => {
-    const res = await app.request(
-      '/api/links?search=aaa',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links?search=aaa', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveLength(1);
@@ -221,11 +209,7 @@ describe('GET /api/links', () => {
   });
 
   it('applies limit parameter', async () => {
-    const res = await app.request(
-      '/api/links?limit=1',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links?limit=1', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveLength(1);
@@ -233,11 +217,7 @@ describe('GET /api/links', () => {
 
   it('filters by tag', async () => {
     await seedKV(kv, { ...makeEntry('tagged'), tags: ['promo'] });
-    const res = await app.request(
-      '/api/links?tag=promo',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links?tag=promo', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveLength(1);
@@ -255,11 +235,7 @@ describe('GET /api/links/:code', () => {
   });
 
   it('returns a single link', async () => {
-    const res = await app.request(
-      '/api/links/mylink',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links/mylink', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.slug).toBe('mylink');
@@ -267,11 +243,7 @@ describe('GET /api/links/:code', () => {
   });
 
   it('returns 404 for missing link', async () => {
-    const res = await app.request(
-      '/api/links/nonexistent',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links/nonexistent', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(404);
     const body = await res.json();
     expect(body.error).toMatch(/not found/);
@@ -344,31 +316,19 @@ describe('DELETE /api/links/:code', () => {
   });
 
   it('deletes an existing link', async () => {
-    const res = await app.request(
-      '/api/links/delme',
-      { method: 'DELETE', headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links/delme', { method: 'DELETE', headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
     expect(body.deleted).toBe('delme');
 
     // Verify deleted
-    const check = await app.request(
-      '/api/links/delme',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const check = await app.request('/api/links/delme', { headers: AUTH }, ENV(kv));
     expect(check.status).toBe(404);
   });
 
   it('returns 404 for missing link', async () => {
-    const res = await app.request(
-      '/api/links/ghost',
-      { method: 'DELETE', headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/links/ghost', { method: 'DELETE', headers: AUTH }, ENV(kv));
     expect(res.status).toBe(404);
   });
 });
@@ -383,11 +343,7 @@ describe('GET /api/stats/:code', () => {
   });
 
   it('returns empty stats for a link with no clicks', async () => {
-    const res = await app.request(
-      '/api/stats/tracked',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/stats/tracked', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.code).toBe('tracked');
@@ -399,11 +355,7 @@ describe('GET /api/stats/:code', () => {
   });
 
   it('returns 404 for non-existent link', async () => {
-    const res = await app.request(
-      '/api/stats/missing',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/stats/missing', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(404);
   });
 
@@ -416,18 +368,14 @@ describe('GET /api/stats/:code', () => {
     await kv.put('device:tracked:mobile', '2');
     await kv.put('referrer:tracked:google.com', '3');
 
-    const res = await app.request(
-      '/api/stats/tracked',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/stats/tracked', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.total).toBe(5);
     expect(body.daily['2025-01-01']).toBe(3);
     expect(body.daily['2025-01-02']).toBe(2);
-    expect(body.geo['US']).toBe(4);
-    expect(body.device['mobile']).toBe(2);
+    expect(body.geo.US).toBe(4);
+    expect(body.device.mobile).toBe(2);
     expect(body.referrer['google.com']).toBe(3);
   });
 });
@@ -439,11 +387,7 @@ describe('GET /api/export', () => {
     await seedKV(kv, makeEntry('exp1', 'https://a.com'));
     await seedKV(kv, makeEntry('exp2', 'https://b.com'));
 
-    const res = await app.request(
-      '/api/export',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/export', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     expect(res.headers.get('Content-Disposition')).toContain('clipr-export.json');
     const body = await res.json();
@@ -453,11 +397,7 @@ describe('GET /api/export', () => {
 
   it('exports empty array when no links', async () => {
     const kv = createMockKV();
-    const res = await app.request(
-      '/api/export',
-      { headers: AUTH },
-      ENV(kv),
-    );
+    const res = await app.request('/api/export', { headers: AUTH }, ENV(kv));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toEqual([]);

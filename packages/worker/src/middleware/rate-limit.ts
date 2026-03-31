@@ -20,10 +20,7 @@ export async function rateLimitMiddleware(
   const count = current ? Number.parseInt(current, 10) : 0;
 
   if (count >= RATE_LIMIT) {
-    return c.json(
-      { error: 'Rate limit exceeded. Maximum 100 URLs per hour.' },
-      429,
-    );
+    return c.json({ error: 'Rate limit exceeded. Maximum 100 URLs per hour.' }, 429);
   }
 
   await c.env.URLS.put(key, String(count + 1), { expirationTtl: WINDOW_SECONDS });
