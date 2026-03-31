@@ -104,92 +104,93 @@ const baseUrl = siteConfig.url || 'https://clipr.sh';
 </style>
 
 <script define:vars={{ baseUrl }}>
-  const SLUG_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
+  document.addEventListener('DOMContentLoaded', function() {
+    var SLUG_ALPHABET = 'abcdefghijkmnpqrstuvwxyz23456789';
 
-  function generateSlug(length) {
-    const bytes = new Uint8Array(length || 6);
-    crypto.getRandomValues(bytes);
-    let slug = '';
-    for (let i = 0; i < bytes.length; i++) {
-      slug += SLUG_ALPHABET[bytes[i] % SLUG_ALPHABET.length];
-    }
-    return slug;
-  }
-
-  const form = document.getElementById('shorten-form');
-  const result = document.getElementById('shorten-result');
-  const urlInput = document.getElementById('url-input');
-  const shortenBtn = document.getElementById('shorten-btn');
-  const errorEl = document.getElementById('shorten-error');
-  const resultUrl = document.getElementById('result-url');
-  const resultOriginal = document.getElementById('result-original');
-  const copyBtn = document.getElementById('copy-result-btn');
-  const againBtn = document.getElementById('shorten-again-btn');
-
-  shortenBtn.addEventListener('click', function() {
-    var url = urlInput.value.trim();
-    errorEl.style.display = 'none';
-
-    if (!url) {
-      errorEl.textContent = 'Please enter a URL';
-      errorEl.style.display = 'block';
-      return;
+    function generateSlug(length) {
+      var bytes = new Uint8Array(length || 6);
+      crypto.getRandomValues(bytes);
+      var slug = '';
+      for (var i = 0; i < bytes.length; i++) {
+        slug += SLUG_ALPHABET[bytes[i] % SLUG_ALPHABET.length];
+      }
+      return slug;
     }
 
-    try {
-      var parsed = new URL(url);
-      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        errorEl.textContent = 'Only http and https URLs are supported';
+    var form = document.getElementById('shorten-form');
+    var result = document.getElementById('shorten-result');
+    var urlInput = document.getElementById('url-input');
+    var shortenBtn = document.getElementById('shorten-btn');
+    var errorEl = document.getElementById('shorten-error');
+    var resultUrl = document.getElementById('result-url');
+    var resultOriginal = document.getElementById('result-original');
+    var copyBtn = document.getElementById('copy-result-btn');
+    var againBtn = document.getElementById('shorten-again-btn');
+
+    if (!shortenBtn || !urlInput) return;
+
+    shortenBtn.addEventListener('click', function() {
+      var url = urlInput.value.trim();
+      errorEl.style.display = 'none';
+
+      if (!url) {
+        errorEl.textContent = 'Please enter a URL';
         errorEl.style.display = 'block';
         return;
       }
-    } catch (e) {
-      errorEl.textContent = 'Please enter a valid URL';
-      errorEl.style.display = 'block';
-      return;
-    }
 
-    var slug = generateSlug(6);
-    var shortUrl = baseUrl + '/' + slug;
+      try {
+        var parsed = new URL(url);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+          errorEl.textContent = 'Only http and https URLs are supported';
+          errorEl.style.display = 'block';
+          return;
+        }
+      } catch (e) {
+        errorEl.textContent = 'Please enter a valid URL';
+        errorEl.style.display = 'block';
+        return;
+      }
 
-    resultUrl.textContent = shortUrl;
-    resultOriginal.textContent = url;
-    form.style.display = 'none';
-    result.style.display = 'block';
+      var slug = generateSlug(6);
+      var shortUrl = baseUrl + '/' + slug;
 
-    if (typeof window.showToast === 'function') {
-      window.showToast('Short URL generated!', 'success');
-    }
-  });
+      resultUrl.textContent = shortUrl;
+      resultOriginal.textContent = url;
+      form.style.display = 'none';
+      result.style.display = 'block';
 
-  // Enter key to submit
-  urlInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') shortenBtn.click();
-  });
-
-  // Copy
-  copyBtn.addEventListener('click', function() {
-    var text = resultUrl.textContent || '';
-    navigator.clipboard.writeText(text).then(function() {
-      var copyIcon = copyBtn.querySelector('.copy-icon');
-      var checkIcon = copyBtn.querySelector('.check-icon');
-      copyIcon.style.display = 'none';
-      checkIcon.style.display = 'block';
-      setTimeout(function() {
-        copyIcon.style.display = 'block';
-        checkIcon.style.display = 'none';
-      }, 1500);
       if (typeof window.showToast === 'function') {
-        window.showToast('Copied!', 'success');
+        window.showToast('Short URL generated!', 'success');
       }
     });
-  });
 
-  // Again
-  againBtn.addEventListener('click', function() {
-    urlInput.value = '';
-    result.style.display = 'none';
-    form.style.display = 'block';
-    urlInput.focus();
+    urlInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') shortenBtn.click();
+    });
+
+    copyBtn.addEventListener('click', function() {
+      var text = resultUrl.textContent || '';
+      navigator.clipboard.writeText(text).then(function() {
+        var copyIcon = copyBtn.querySelector('.copy-icon');
+        var checkIcon = copyBtn.querySelector('.check-icon');
+        copyIcon.style.display = 'none';
+        checkIcon.style.display = 'block';
+        setTimeout(function() {
+          copyIcon.style.display = 'block';
+          checkIcon.style.display = 'none';
+        }, 1500);
+        if (typeof window.showToast === 'function') {
+          window.showToast('Copied!', 'success');
+        }
+      });
+    });
+
+    againBtn.addEventListener('click', function() {
+      urlInput.value = '';
+      result.style.display = 'none';
+      form.style.display = 'block';
+      urlInput.focus();
+    });
   });
 </script>
