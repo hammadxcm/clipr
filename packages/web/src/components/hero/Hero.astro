@@ -225,14 +225,45 @@ const t = getTranslation(locale);
     left: 0;
     top: 0;
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+    transform: translateY(100%) rotateX(-80deg);
+    filter: blur(8px);
     white-space: nowrap;
+    transition: none;
   }
 
   .hero-word--active {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) rotateX(0deg);
+    filter: blur(0);
+    animation: word-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .hero-word--leaving {
+    animation: word-out 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  }
+
+  @keyframes word-in {
+    0% { opacity: 0; transform: translateY(100%) rotateX(-80deg); filter: blur(8px); }
+    60% { opacity: 1; filter: blur(0); }
+    80% { transform: translateY(-5%) rotateX(2deg); }
+    100% { opacity: 1; transform: translateY(0) rotateX(0deg); filter: blur(0); }
+  }
+
+  @keyframes word-out {
+    0% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-120%) scale(1.05); filter: blur(6px); }
+  }
+
+  @keyframes word-glow {
+    0% { text-shadow: none; }
+    50% { text-shadow: 0 0 20px color-mix(in srgb, var(--color-brand) 40%, transparent); }
+    100% { text-shadow: none; }
+  }
+
+  .hero-word--active::after {
+    content: '';
+    display: block;
+    animation: word-glow 0.8s ease 0.2s;
   }
 
   .hero-description {
@@ -297,16 +328,28 @@ const t = getTranslation(locale);
   .hero-terminal::before {
     content: '';
     position: absolute;
-    inset: -1px;
-    border-radius: 13px;
+    inset: -2px;
+    border-radius: 14px;
     background: linear-gradient(
       135deg,
-      color-mix(in srgb, var(--color-brand) 20%, transparent),
-      transparent 50%,
-      color-mix(in srgb, var(--color-brand-light) 10%, transparent)
+      color-mix(in srgb, var(--color-brand) 30%, transparent),
+      transparent 40%,
+      color-mix(in srgb, var(--color-brand-light) 15%, transparent) 80%,
+      color-mix(in srgb, var(--color-brand) 20%, transparent)
     );
     z-index: -1;
-    opacity: 0.6;
+    opacity: 0.7;
+  }
+
+  .hero-terminal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.5),
+      0 0 40px -10px color-mix(in srgb, var(--color-brand) 10%, transparent);
+    z-index: -1;
+    pointer-events: none;
   }
 
   /* Responsive */
@@ -357,23 +400,81 @@ const t = getTranslation(locale);
 </style>
 
 <script>
-  import { heroRotatingWords } from '../../data/site';
   import { initTerminalDemo } from '../../scripts/terminal-demo';
 
-  // Rotating word animation
+  // Theme-based synonyms for rotating words
+  const themeSynonyms: Record<string, string[]> = {
+    '': ['Full Control.', 'Edge-Fast.', 'Git-Tracked.', 'Lightning Quick.', 'Self-Hosted.', 'Open Source.'],
+    hacker: ['Full Control.', 'Edge-Fast.', 'Git-Tracked.', 'Lightning Quick.', 'Self-Hosted.', 'Open Source.'],
+    dracula: ['Elegant.', 'Bewitching.', 'Immortal Links.', 'Night Mode.', 'Darkly Fast.', 'Fangs Out.'],
+    nord: ['Frost-Fast.', 'Crystal Clear.', 'Snow Clean.', 'Icy Fresh.', 'Polar Speed.', 'Nordic Cool.'],
+    catppuccin: ['Cozy Links.', 'Pastel Perfect.', 'Soft & Fast.', 'Latte Speed.', 'Dreamy Clean.', 'Purrfect.'],
+    synthwave: ['Retro Style.', 'Neon-Lit.', 'Turbo Mode.', '80s Fast.', 'Full Throttle.', 'Rad Links.'],
+    matrix: ['System Override.', 'Root Access.', 'Ctrl+C Links.', 'Zero Day.', 'Kernel Fast.', 'Sudo Short.'],
+    bloodmoon: ['No Mercy.', 'Blood-Fast.', 'Crimson Links.', 'Brutal Speed.', 'Death Grip.', 'Gore Mode.'],
+    midnight: ['Twilight Fast.', 'Starlit Links.', 'Dream Speed.', 'Astral Mode.', 'Cosmic Clean.', 'Nova Links.'],
+    arctic: ['Sub-Zero.', 'Ice Cold.', 'Glacier Fast.', 'Frostbitten.', 'Polar Links.', 'Arctic Clean.'],
+    gruvbox: ['Old School.', 'No Nonsense.', 'Warm & Fast.', 'Retro Clean.', 'Vintage Links.', 'Analog Speed.'],
+    cyberpunk: ['Augmented.', 'Overclocked.', 'Neural-Linked.', 'Hardwired.', 'Jacked In.', 'Neon-Wired.'],
+    nebula: ['Cosmic.', 'Stellar.', 'Interstellar.', 'Light Years.', 'Supernova.', 'Deep Space.'],
+    solarized: ['Sun-Kissed.', 'Warm Glow.', 'Golden Links.', 'Solar Speed.', 'Dawn Fresh.', 'Bright Mode.'],
+    rosepine: ['Petal Soft.', 'Rose-Tinted.', 'Bloom Fast.', 'Dusk Links.', 'Floral Speed.', 'Garden Fresh.'],
+    monokai: ['Mono Fast.', 'Syntax Clean.', 'Code Speed.', 'Sharp Links.', 'Dev Mode.', 'Hacker Fast.'],
+  };
+
   function initRotatingWords(): void {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const words = document.querySelectorAll('.hero-word');
+    const words = document.querySelectorAll<HTMLElement>('.hero-word');
     if (words.length === 0) return;
 
     let current = 0;
+    let currentTheme = document.documentElement.getAttribute('data-theme') || '';
 
+    function getWords(): string[] {
+      return themeSynonyms[currentTheme] || themeSynonyms[''] || [];
+    }
+
+    function updateWordTexts(): void {
+      const themeWords = getWords();
+      words.forEach((word, i) => {
+        if (themeWords[i]) {
+          word.textContent = themeWords[i];
+        }
+      });
+    }
+
+    // Update words when theme changes
+    window.addEventListener('themechange', ((e: CustomEvent) => {
+      currentTheme = e.detail?.theme || '';
+      updateWordTexts();
+    }) as EventListener);
+
+    // Also watch data-theme attribute
+    new MutationObserver(() => {
+      const newTheme = document.documentElement.getAttribute('data-theme') || '';
+      if (newTheme !== currentTheme) {
+        currentTheme = newTheme;
+        updateWordTexts();
+      }
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // Rotate words with enter/leave animation
     setInterval(() => {
-      words[current].classList.remove('hero-word--active');
+      const leaving = words[current];
+      leaving.classList.remove('hero-word--active');
+      leaving.classList.add('hero-word--leaving');
+
+      setTimeout(() => {
+        leaving.classList.remove('hero-word--leaving');
+      }, 350);
+
       current = (current + 1) % words.length;
       words[current].classList.add('hero-word--active');
-    }, 2800);
+    }, 3000);
+
+    // Set initial theme words
+    updateWordTexts();
   }
 
   initRotatingWords();

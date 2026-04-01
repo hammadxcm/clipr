@@ -1,95 +1,237 @@
 ---
 const stats = [
-  { value: 87, label: 'Tests Passing', suffix: '' },
-  { value: 15, label: 'Themes', suffix: '' },
-  { value: 12, label: 'Languages', suffix: '' },
-  { value: 13, label: 'CLI Commands', suffix: '' },
-  { value: 4, label: 'Packages', suffix: '' },
+  {
+    number: 0,
+    suffix: '+',
+    label: 'Downloads',
+    color: 'var(--color-brand)',
+    api: 'npm',
+    url: 'https://www.npmjs.com/package/clipr-cli',
+  },
+  {
+    number: 0,
+    suffix: '',
+    label: 'GitHub Stars',
+    color: 'var(--color-brand-light)',
+    api: 'github',
+    url: 'https://github.com/hammadxcm/clipr',
+  },
+  { number: 138, suffix: '+', label: 'Tests Passing', color: 'var(--color-brand-mint)' },
+  { number: 15, suffix: '', label: 'Themes', color: 'var(--color-brand)' },
+  { number: 12, suffix: '', label: 'Languages', color: 'var(--color-brand-light)' },
+  { number: 13, suffix: '', label: 'CLI Commands', color: 'var(--color-brand-mint)' },
 ];
 ---
 
-<section id="stats" class="section" style="padding:3rem 1.5rem;">
-  <div class="reveal" style="display:grid;grid-template-columns:repeat(5,1fr);gap:1.5rem;max-width:900px;margin:0 auto;text-align:center;">
-    {stats.map((stat, i) => (
-      <div
-        class="stat-card glass"
-        style={`padding:1.5rem 1rem;border-radius:var(--radius-md);transition-delay:${i * 0.1}s;`}
-        data-target={stat.value}
-      >
-        <div class="stat-value gradient-text" style="font-size:2.5rem;font-weight:800;line-height:1;margin-bottom:0.5rem;">
-          <span class="stat-number">0</span>{stat.suffix}
+<section id="stats" class="stats" aria-label="Project statistics">
+  <div class="section stats-grid">
+    {stats.map((stat, i) => {
+      const inner = (
+        <>
+          <span
+            class="stat-number"
+            data-target={stat.number}
+            data-suffix={stat.suffix || ''}
+            data-api={stat.api || undefined}
+          >
+            {stat.api ? '\u2014' : `0${stat.suffix || ''}`}
+          </span>
+          <span class="stat-label">{stat.label}</span>
+        </>
+      );
+      return stat.url ? (
+        <a href={stat.url} target="_blank" rel="noopener noreferrer" class="stat-card stat-card--link glass reveal" style={`--accent: ${stat.color}; --delay: ${i * 0.08}s;`}>
+          {inner}
+        </a>
+      ) : (
+        <div class="stat-card glass reveal" style={`--accent: ${stat.color}; --delay: ${i * 0.08}s;`}>
+          {inner}
         </div>
-        <div style="font-size:0.8rem;color:var(--color-text-secondary);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;">
-          {stat.label}
-        </div>
-      </div>
-    ))}
+      );
+    })}
   </div>
 </section>
 
 <style>
+  .stats {
+    padding: 3rem 0;
+    position: relative;
+  }
+
+  .stats::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-border-default), transparent);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
   .stat-card {
-    transition: transform 0.3s var(--ease-out-expo), border-color 0.3s ease;
+    text-align: center;
+    padding: 1.75rem 1rem;
+    border-radius: var(--radius-md);
+    transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  .stat-card--link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
   }
 
   .stat-card:hover {
     transform: translateY(-4px);
-    border-color: var(--color-border-hover);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2),
+      0 0 40px color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 30%, var(--color-border-default));
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2.75rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    background: linear-gradient(135deg, var(--accent), var(--color-text-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-number.loading {
+    animation: pulse-stat 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-stat {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  .stat-label {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   @media (max-width: 768px) {
-    #stats > div {
-      grid-template-columns: repeat(3, 1fr) !important;
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
     }
   }
 
   @media (max-width: 480px) {
-    #stats > div {
-      grid-template-columns: repeat(2, 1fr) !important;
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    .stat-card {
+      padding: 1.25rem 0.75rem;
+    }
+
+    .stat-number {
+      font-size: 1.75rem;
     }
   }
 </style>
 
 <script>
-  function animateCounters() {
-    const cards = document.querySelectorAll('.stat-card');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const card = entry.target as HTMLElement;
-          const target = parseInt(card.dataset.target || '0', 10);
-          const numberEl = card.querySelector('.stat-number');
-          if (!numberEl) return;
+  function animateCounter(el, target, suffix) {
+    el.classList.remove('loading');
+    if (reducedMotion || target === 0) {
+      el.textContent = target.toLocaleString() + suffix;
+      return;
+    }
+    var current = 0;
+    var duration = 1500;
+    var totalSteps = Math.min(target, 40);
+    var increment = Math.max(1, Math.ceil(target / totalSteps));
+    var stepTime = duration / totalSteps;
+    var timer = setInterval(function() {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(timer);
+      }
+      el.textContent = current.toLocaleString() + suffix;
+    }, stepTime);
+  }
 
-          let current = 0;
-          const duration = 1500;
-          const step = target / (duration / 16);
-
-          function tick() {
-            current += step;
-            if (current >= target) {
-              (numberEl as HTMLElement).textContent = String(target);
-              return;
-            }
-            (numberEl as HTMLElement).textContent = String(Math.floor(current));
-            requestAnimationFrame(tick);
-          }
-
-          requestAnimationFrame(tick);
-          observer.unobserve(card);
-        }
+  function observeAndAnimate(el, target, suffix) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (!entry.isIntersecting) return;
+        animateCounter(entry.target, target, suffix);
+        observer.unobserve(entry.target);
       });
     }, { threshold: 0.3 });
-
-    cards.forEach((card) => observer.observe(card));
+    observer.observe(el);
   }
 
-  if (typeof window !== 'undefined') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', animateCounters);
-    } else {
-      animateCounters();
-    }
-  }
+  // Static counters
+  document.querySelectorAll('.stat-number:not([data-api])').forEach(function(el) {
+    var target = parseInt(el.dataset.target || '0', 10);
+    var suffix = el.dataset.suffix || '';
+    observeAndAnimate(el, target, suffix);
+  });
+
+  // Dynamic counters — fetch from npm + GitHub APIs
+  var dynamicEls = document.querySelectorAll('.stat-number[data-api]');
+  dynamicEls.forEach(function(el) { el.classList.add('loading'); });
+
+  Promise.allSettled([
+    fetch('https://api.npmjs.org/downloads/point/2020-01-01:2030-01-01/clipr-cli').then(function(r) { return r.json(); }),
+    fetch('https://api.github.com/repos/hammadxcm/clipr').then(function(r) { return r.json(); })
+  ]).then(function(results) {
+    dynamicEls.forEach(function(el) {
+      var api = el.dataset.api;
+      var suffix = el.dataset.suffix || '';
+      var value = 0;
+
+      if (api === 'npm' && results[0].status === 'fulfilled') {
+        value = results[0].value.downloads || 0;
+      } else if (api === 'github' && results[1].status === 'fulfilled') {
+        value = results[1].value.stargazers_count || 0;
+      }
+
+      el.dataset.target = String(value);
+
+      var rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        animateCounter(el, value, suffix);
+      } else {
+        observeAndAnimate(el, value, suffix);
+      }
+    });
+  }).catch(function() {
+    dynamicEls.forEach(function(el) {
+      el.classList.remove('loading');
+      el.textContent = '\u2014';
+    });
+  });
 </script>
