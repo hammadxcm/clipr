@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.11
+
+### Patch Changes
+
+- feat: theme-based hero synonyms, terminal polish, npm stats, logo, marquee
+- Updated dependencies
+  - @clipr/core@0.0.11
+
 ## 0.0.10
 
 ### Patch Changes
