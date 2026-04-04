@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.12
+
+### Patch Changes
+
+- fix: bump defu to >=6.1.5 (GHSA-737v-mqg7-c878 prototype pollution) (#17)
+
 ## 0.0.11
 
 ### Patch Changes
