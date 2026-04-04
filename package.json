@@ -55,6 +55,9 @@
       "esbuild",
       "workerd",
       "sharp"
-    ]
+    ],
+    "overrides": {
+      "defu": ">=6.1.5"
+    }
   }
 }
