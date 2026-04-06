@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.13
+
+### Patch Changes
+
+- build(deps): bump pnpm/action-setup from 4 to 5 (#20)
+- Updated dependencies
+  - @clipr/core@0.0.13
+
 ## 0.0.12
 
 ### Patch Changes
