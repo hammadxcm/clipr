@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - build(deps-dev): bump the dev-dependencies group with 3 updates
+- build(deps): bump pnpm/action-setup from 4 to 5 (#20)
 - Updated dependencies
   - @clipr/core@0.0.13
 
