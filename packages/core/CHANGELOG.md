@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.13
+
+### Patch Changes
+
+- build(deps-dev): bump the dev-dependencies group with 3 updates
+
 ## 0.0.12
 
 ### Patch Changes
