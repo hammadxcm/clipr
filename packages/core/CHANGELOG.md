@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.14
+
+### Patch Changes
+
+- fix: update vite to address CVE-2026-39363 (#25)
+
 ## 0.0.13
 
 ### Patch Changes

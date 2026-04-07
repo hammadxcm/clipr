@@ -1,6 +1,6 @@
 {
   "name": "@clipr/core",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Shared types, validation, slug generation, and utilities for clipr URL shortener",
   "type": "module",
   "exports": {
