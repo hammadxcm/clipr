@@ -1,6 +1,6 @@
 {
   "name": "clipr-cli",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "A fast, git-friendly URL shortener. CLI + programmatic API.",
   "type": "module",
   "bin": {
