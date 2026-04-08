@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@clipr/core": "workspace:*",
-    "hono": "^4.12.10",
+    "hono": "^4.12.12",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
