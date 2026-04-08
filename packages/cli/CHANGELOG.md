@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.15
+
+### Patch Changes
+
+- build(deps): bump hono from 4.12.10 to 4.12.12 (#27)
+- Updated dependencies
+  - @clipr/core@0.0.15
+
 ## 0.0.14
 
 ### Patch Changes
