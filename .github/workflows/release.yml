@@ -23,6 +23,8 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}
 
       - uses: pnpm/action-setup@v6
+        with:
+          version: 10
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'
