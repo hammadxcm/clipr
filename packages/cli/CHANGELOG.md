@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.17
+
+### Patch Changes
+
+- build(deps-dev): bump the dev-dependencies group with 6 updates (#45)
+- Updated dependencies
+  - @clipr/core@0.0.17
+
 ## 0.0.16
 
 ### Patch Changes
