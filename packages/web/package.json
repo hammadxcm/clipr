@@ -18,7 +18,7 @@
     "qrcode": "^1.5.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.0",
+    "@astrojs/check": "^0.9.9",
     "@tailwindcss/vite": "^4.2.4",
     "@types/qrcode": "^1.5.0",
     "tailwindcss": "^4.2.4",
