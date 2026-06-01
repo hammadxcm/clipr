@@ -19,11 +19,11 @@
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260525.1",
+    "@cloudflare/workers-types": "^4.20260531.1",
     "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.5",
     "vitest": "^4.1.7",
-    "wrangler": "^4.94.0"
+    "wrangler": "^4.95.0"
   },
   "engines": {
     "node": ">=22"
