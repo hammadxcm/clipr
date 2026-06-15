@@ -58,7 +58,9 @@
     ],
     "overrides": {
       "defu": ">=6.1.5",
-      "vite": ">=7.3.2"
+      "vite": ">=7.3.2",
+      "esbuild": "^0.28.1",
+      "@biomejs/biome": "2.4.16"
     }
   }
 }
