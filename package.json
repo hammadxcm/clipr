@@ -26,14 +26,14 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.16",
+    "@biomejs/biome": "^2.5.3",
     "@changesets/cli": "^2.31.0",
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
-    "@vitest/coverage-v8": "^4.1.7",
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "husky": "^9.0.0",
-    "lint-staged": "^17.0.7",
-    "typescript": "^6.0.3"
+    "lint-staged": "^17.0.8",
+    "typescript": "^7.0.2"
   },
   "lint-staged": {
     "*": [
@@ -60,7 +60,7 @@
       "defu": ">=6.1.5",
       "vite": ">=7.3.2",
       "esbuild": "^0.28.1",
-      "@biomejs/biome": "2.4.16",
+      "@biomejs/biome": "2.5.3",
       "yaml": "^2.8.3"
     }
   }
