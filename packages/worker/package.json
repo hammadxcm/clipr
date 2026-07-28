@@ -1,6 +1,6 @@
 {
   "name": "@clipr/worker",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Cloudflare Worker for clipr URL redirects",
   "type": "module",
   "main": "./src/index.ts",
@@ -15,15 +15,15 @@
   },
   "dependencies": {
     "@clipr/core": "workspace:*",
-    "hono": "^4.12.14",
+    "hono": "^4.12.26",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260413.1",
-    "@types/node": "^25.6.0",
+    "@cloudflare/workers-types": "^4.20260531.1",
+    "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.5",
-    "vitest": "^4.1.4",
-    "wrangler": "^4.82.1"
+    "vitest": "^4.1.7",
+    "wrangler": "^4.95.0"
   },
   "engines": {
     "node": ">=22"

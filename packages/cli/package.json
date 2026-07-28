@@ -1,6 +1,6 @@
 {
   "name": "clipr-cli",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "A fast, git-friendly URL shortener. CLI + programmatic API.",
   "type": "module",
   "bin": {
@@ -58,15 +58,15 @@
   },
   "dependencies": {
     "@clipr/core": "workspace:*",
-    "commander": "^14.0.3",
+    "commander": "^15.0.0",
     "picocolors": "^1.1.0",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.6",
     "tsup": "^8.0.0",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.7"
   },
   "engines": {
     "node": ">=22"

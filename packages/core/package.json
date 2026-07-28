@@ -1,6 +1,6 @@
 {
   "name": "@clipr/core",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Shared types, validation, slug generation, and utilities for clipr URL shortener",
   "type": "module",
   "exports": {
@@ -51,9 +51,9 @@
     "sqids": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^25.6.0",
+    "@types/node": "^25.9.1",
     "tsup": "^8.0.0",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.7"
   },
   "engines": {
     "node": ">=22"
