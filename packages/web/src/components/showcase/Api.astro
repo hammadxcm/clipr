@@ -52,7 +52,7 @@ const t = getTranslation(locale);
 <span class="c-kw">const</span> <span class="c-vr">url</span> <span class="c-op">=</span> <span class="c-str">'https://example.com/launch'</span>;
 <span class="c-kw">if</span> (<span class="c-fn">validateUrl</span>(<span class="c-vr">url</span>)) {'{'}
   <span class="c-kw">const</span> <span class="c-vr">slug</span> <span class="c-op">=</span> <span class="c-kw">await</span> <span class="c-vr">backend</span>.<span class="c-fn">shorten</span>(<span class="c-vr">url</span>);
-  <span class="c-vr">console</span>.<span class="c-fn">log</span>(<span class="c-str">`Created: </span><span class="c-op">${'$'}{</span><span class="c-vr">slug</span><span class="c-op">}</span><span class="c-str">`</span>);
+  <span class="c-vr">console</span>.<span class="c-fn">log</span>(<span class="c-str">`Created: </span><span class="c-op">{'${'}</span><span class="c-vr">slug</span><span class="c-op">{'}'}</span><span class="c-str">`</span>);
 {'}'}
 
 <span class="c-cm">// Append UTM params</span>
