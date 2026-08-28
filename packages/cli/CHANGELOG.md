@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.17
+
+### Patch Changes
+
+- chore(deps): upgrade Astro 7 and clear open security alerts (#72)
+- Updated dependencies
+  - @clipr/core@0.0.17
+
 ## 0.0.16
 
 ### Patch Changes
