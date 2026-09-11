@@ -66,7 +66,7 @@
     "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.6",
     "tsup": "^8.0.0",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=22"
