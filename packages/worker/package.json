@@ -22,7 +22,7 @@
     "@cloudflare/workers-types": "^4.20260531.1",
     "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.5",
-    "vitest": "^4.1.7",
+    "vitest": "^4.1.11",
     "wrangler": "^4.95.0"
   },
   "engines": {
