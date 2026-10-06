@@ -12,16 +12,16 @@
     "clean": "rm -rf dist .astro"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.4",
     "@clipr/core": "workspace:*",
-    "astro": "^7.1.5",
+    "astro": "^7.3.5",
     "qrcode": "^1.5.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
-    "@tailwindcss/vite": "^4.3.0",
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/qrcode": "^1.5.0",
-    "tailwindcss": "^4.3.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   },
   "engines": {
