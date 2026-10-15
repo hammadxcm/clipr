@@ -15,14 +15,14 @@
   },
   "dependencies": {
     "@clipr/core": "workspace:*",
-    "hono": "^4.12.27",
+    "hono": "^4.13.5",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260531.1",
     "@types/node": "^25.9.1",
     "@types/qrcode": "^1.5.5",
-    "vitest": "^4.1.7",
+    "vitest": "^4.1.11",
     "wrangler": "^4.95.0"
   },
   "engines": {
