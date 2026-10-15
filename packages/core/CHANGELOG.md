@@ -1,5 +1,11 @@
 # @clipr/core
 
+## 0.0.17
+
+### Patch Changes
+
+- ci: fix Release by pinning changesets/action to v1 (#87)
+
 ## 0.0.16
 
 ### Patch Changes
