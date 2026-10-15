@@ -4,52 +4,58 @@ on:
   issues:
     types: [opened]
 
-permissions:
-  contents: write
-  issues: write
+permissions: {}
 
 jobs:
   shorten:
     if: startsWith(github.event.issue.title, 'http')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # pushes urls.json
+      issues: write
     steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v5
-      - uses: pnpm/action-setup@v5
-      - uses: actions/setup-node@v6
+      # persist-credentials kept: the 'Commit urls.json' step pushes with git
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked] -- later steps push with git
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version-file: '.nvmrc'
-          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:core
       - run: pnpm build:cli
 
       - name: Shorten URL
         id: shorten
+        env:
+          URL: ${{ github.event.issue.title }}
         run: |
-          URL="${{ github.event.issue.title }}"
           RESULT=$(node packages/cli/dist/index.js shorten "$URL" 2>&1)
           SLUG=$(echo "$RESULT" | tail -1 | xargs)
-          echo "slug=$SLUG" >> $GITHUB_OUTPUT
-          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "slug=$SLUG" >> "$GITHUB_OUTPUT"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
 
       - name: Commit urls.json
+        env:
+          SHORT_URL: ${{ steps.shorten.outputs.url }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add urls.json
-          git commit -m "feat(urls): shorten ${{ steps.shorten.outputs.url }}"
+          git commit -m "feat(urls): shorten $SHORT_URL"
           git push
 
       - name: Comment on issue
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          SLUG: ${{ steps.shorten.outputs.slug }}
+          SHORT_URL: ${{ steps.shorten.outputs.url }}
         with:
           script: |
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `Short URL created: **${{ steps.shorten.outputs.slug }}**\n\nTarget: ${{ steps.shorten.outputs.url }}`
+              body: `Short URL created: **${process.env.SLUG}**\n\nTarget: ${process.env.SHORT_URL}`
             });
             await github.rest.issues.update({
               owner: context.repo.owner,
