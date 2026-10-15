@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.17
+
+### Patch Changes
+
+- ci: fix Release by pinning changesets/action to v1 (#87)
+- Updated dependencies
+  - @clipr/core@0.0.17
+
 ## 0.0.16
 
 ### Patch Changes
