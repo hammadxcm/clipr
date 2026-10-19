@@ -51,9 +51,9 @@
     "sqids": "^0.3.0"
   },
   "devDependencies": {
-    "@types/node": "^25.9.1",
-    "tsup": "^8.0.0",
-    "vitest": "^4.1.11"
+    "@types/node": "^26.6.5",
+    "tsup": "^9.0.0",
+    "vitest": "^5.0.5"
   },
   "engines": {
     "node": ">=22"
