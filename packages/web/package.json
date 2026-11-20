@@ -12,9 +12,9 @@
     "clean": "rm -rf dist .astro"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/sitemap": "^3.7.6",
     "@clipr/core": "workspace:*",
-    "astro": "^7.2.8",
+    "astro": "^7.4.13",
     "qrcode": "^1.5.0"
   },
   "devDependencies": {
