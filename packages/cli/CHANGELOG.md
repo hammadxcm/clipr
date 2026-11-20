@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.17
+
+### Patch Changes
+
+- fix(deps): resolve open Dependabot security alerts (#94)
+- Updated dependencies
+  - @clipr/core@0.0.17
+
 ## 0.0.16
 
 ### Patch Changes
