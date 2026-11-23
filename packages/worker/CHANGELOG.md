@@ -1,5 +1,12 @@
 # @clipr/worker
 
+## 0.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @clipr/core@0.0.17
+
 ## 0.0.15
 
 ### Patch Changes
