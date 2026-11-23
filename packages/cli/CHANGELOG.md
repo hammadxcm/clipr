@@ -1,5 +1,13 @@
 # clipr
 
+## 0.0.17
+
+### Patch Changes
+
+- build(deps): bump actions/setup-node from 6.5.0 to 7.1.0 in the github-actions group across 1 directory (#85)
+- Updated dependencies
+  - @clipr/core@0.0.17
+
 ## 0.0.16
 
 ### Patch Changes
